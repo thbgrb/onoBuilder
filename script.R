@@ -5,7 +5,7 @@ library(tidyverse)
 source("R/build_ono_table.R")
 
 ## Importing data
-data <- read_csv(file = "data/data.csv", col_types = 
+data <- read_csv(file = "data/data_bb.csv", col_types = 
   cols(
     Date_Time_Absolute_dmy_hmsf = col_datetime(format = "%d-%m-%Y %H:%M:%OS"),
     Date_dmy = col_date(format = "%d-%m-%Y"),
@@ -22,12 +22,12 @@ data <- read_csv(file = "data/data.csv", col_types =
     Subject = col_factor(),
     Behavior = col_factor(),
     Modifier_1 = col_character(),
-    Modifier_2 = col_character(),
-    Modifier_3 = col_character(),
-    Modifier_4 = col_character(),
-    Modifier_5 = col_character(),
-    Modifier_6 = col_character(),
-    Modifier_7 = col_character(),
+    #Modifier_2 = col_character(),
+    #Modifier_3 = col_character(),
+    #Modifier_4 = col_character(),
+    #Modifier_5 = col_character(),
+    #Modifier_6 = col_character(),
+    #Modifier_7 = col_character(),
     Event_Type = col_factor(),
     Comment = col_character())
   )
@@ -76,12 +76,12 @@ result <- data %>%
          Subject,
          Behavior,
          Modifier_1,
-         Modifier_2,
-         Modifier_3,
-         Modifier_4,
-         Modifier_5,
-         Modifier_6, 
-         Modifier_7,
+         #Modifier_2,
+         #Modifier_3,
+         #Modifier_4,
+         #Modifier_5,
+         #Modifier_6, 
+         #Modifier_7,
          starts_with("Comment"),
          -row)
 
@@ -98,18 +98,41 @@ result$Behavior <-
 
 ## Choosing only the group 2
 result <- filter(result,
-                 Observation == "A1G2" | 
-                   Observation == "A2G2" | 
-                   Observation == "A3G2" | 
-                   Observation == "A4G2")
+                 Observation == "A1G2 (WIMP)" | 
+                   Observation == "A2G2 (Paper)" | 
+                   Observation == "A3G2 (Hybrid)" | 
+                   Observation == "A4G2 (MTT)")
 
-## Transforming value in Observation column
-result <- result %>%
-  mutate(Observation = recode(Observation, 
-                              "A1G2" = "A1G2 (WIMP)",
-                              "A2G2" = "A2G2 (Paper)",
-                              "A3G2" = "A3G2 (Hybrid)",
-                              "A4G2" = "A4G2 (MTT)"))
+
+# result %>%
+#   filter(Observation == "A2G2 (Paper)") %>%
+#   filter(Subject == "e3") %>%
+#   filter(Behavior == "Desengagement") %>%
+# 
+#   build_ono_data(df = as.data.frame(.),
+#                  start = "Time_Relative_sf_State start",
+#                  end = "Time_Relative_sf_State stop",
+#                  behavior_column_name = "Behavior",
+#                  select_behavior = c("all")) %>%
+# 
+# 
+# 
+# 
+#   freqprof() %>%
+#   plot_freqprof(gg = T) %>%
+#   ggsave(filename = "A2G2_e3_Desengagement", device = "pdf")
+
+
+
+
+# ## Transforming value in Observation column
+# result <- result %>%
+#   mutate(Observation = recode(Observation, 
+#                               "A1G2" = "A1G2 (WIMP)",
+#                               "A2G2" = "A2G2 (Paper)",
+#                               "A3G2" = "A3G2 (Hybrid)",
+#                               "A4G2" = "A4G2 (MTT)"))
+
 
 ## Analyses -----
 # The data are composed of :
@@ -317,3 +340,4 @@ for (behavior in behaviors) {
     if(inherits(possibleError, "error")) next
     if(inherits(possibleError, "warning")) next
 }
+
