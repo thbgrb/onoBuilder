@@ -182,6 +182,7 @@ for (group in groups) {
                            end = "Time_Relative_sf_State stop",
                            behavior_column_name = "Behavior",
                            select_behavior = c("all")) %>%
+          print(.)
             freqprof() %>%
             plot_freqprof(gg = T)
         
