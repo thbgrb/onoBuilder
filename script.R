@@ -170,29 +170,32 @@ for (group in groups) {
 
   for (pupil in pupils) {
     
-    for (behavior in behaviors) {
+    #for (behavior in behaviors) {
       
       possibleError <- tryCatch({
           result %>%
             filter(Observation == group) %>%
             filter(Subject == pupil) %>%
-            filter(Behavior == behavior) %>%
+            #filter(Behavior == behavior) %>%
             build_ono_data(df = as.data.frame(.),
                            start = "Time_Relative_sf_State start",
                            end = "Time_Relative_sf_State stop",
                            behavior_column_name = "Behavior",
                            select_behavior = c("all")) %>%
-          print(.)
-            freqprof() %>%
-            plot_freqprof(gg = T)
-        
-            ggsave(paste0("results/test1/fp-",
-                          group,
-                          pupil,
-                          behavior,
-                          ".pdf"),
-                 last_plot(),
-                 device = "pdf")
+            write.csv(., paste0("results/test/fp-",
+                                group,
+                                pupil,
+                                ".csv"))
+            # freqprof() %>%
+            # plot_freqprof(gg = T)
+            # 
+            # ggsave(paste0("results/test1/fp-",
+            #               group,
+            #               pupil,
+            #               behavior,
+            #               ".pdf"),
+            #      last_plot(),
+            #      device = "pdf")
           },
             error=function(e) {
               print(e)
@@ -203,7 +206,7 @@ for (group in groups) {
       if(inherits(possibleError, "error")) next
       if(inherits(possibleError, "warning")) next
     }
-  }
+  #}
 }
 
 ###### Each pupil in each group with all behaviors ----
