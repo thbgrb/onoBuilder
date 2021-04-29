@@ -21,7 +21,7 @@ data <- read_csv(file = "data/data_bb.csv", col_types =
     Event_Log = col_character(),
     Subject = col_factor(),
     Behavior = col_factor(),
-    Modifier_1 = col_character(),
+    #Modifier_1 = col_character(),
     #Modifier_2 = col_character(),
     #Modifier_3 = col_character(),
     #Modifier_4 = col_character(),
@@ -95,88 +95,36 @@ result$`Time_Relative_sf_State stop` <-
 result$Behavior <- 
   as.character(result$Behavior)
 
-
-## Choosing only the group 2
-result <- filter(result,
-                 Observation == "A1G2 (WIMP)" | 
-                   Observation == "A2G2 (Paper)" | 
-                   Observation == "A3G2 (Hybrid)" | 
-                   Observation == "A4G2 (MTT)")
-
-
-# result %>%
-#   filter(Observation == "A2G2 (Paper)") %>%
-#   filter(Subject == "e3") %>%
-#   filter(Behavior == "Desengagement") %>%
-# 
-#   build_ono_data(df = as.data.frame(.),
-#                  start = "Time_Relative_sf_State start",
-#                  end = "Time_Relative_sf_State stop",
-#                  behavior_column_name = "Behavior",
-#                  select_behavior = c("all")) %>%
-# 
-# 
-# 
-# 
-#   freqprof() %>%
-#   plot_freqprof(gg = T) %>%
-#   ggsave(filename = "A2G2_e3_Desengagement", device = "pdf")
-
-
-
-
-# ## Transforming value in Observation column
-# result <- result %>%
-#   mutate(Observation = recode(Observation, 
-#                               "A1G2" = "A1G2 (WIMP)",
-#                               "A2G2" = "A2G2 (Paper)",
-#                               "A3G2" = "A3G2 (Hybrid)",
-#                               "A4G2" = "A4G2 (MTT)"))
-
-
-## Analyses -----
-# The data are composed of :
-#  - Groups,
-#  - Pupils,
-#  - Behaviors,
+## finding all groups to create a vector
+groups <- c()
+for(b in data$Observation){
+  if(!match(b, groups)){
+    groups <- c(groups, b)
+  }
+}
 
 groups <- c("A1G2 (WIMP)",
             "A2G2 (Paper)",
             "A3G2 (Hybrid)",
             "A4G2 (MTT)")
 
-pupils <- c("e1",
+subjects <- c("e1",
             "e2",
             "e3",
             "e4",
             "e5",
             "e6")
 
-behaviors <- c("Learning goal oriented",
-               "Desengagement",
-               "Passing an object",
-               "Impatient behavior",
-               "Removing Sth from other's hands",
-               "Verbal",
-               "Leave the activity",
-               "Physical",
-               "Sabotage",
-               "Artifact Monopolization"
-               )
 
-#### Individual analyses ----
-###### Each pupil in each group for each behavior ----
+### for each pupils in each groups generate a .csv file
 for (group in groups) {
 
   for (pupil in pupils) {
-    
-    #for (behavior in behaviors) {
       
       possibleError <- tryCatch({
           result %>%
             filter(Observation == group) %>%
             filter(Subject == pupil) %>%
-            #filter(Behavior == behavior) %>%
             build_ono_data(df = as.data.frame(.),
                            start = "Time_Relative_sf_State start",
                            end = "Time_Relative_sf_State stop",
@@ -186,16 +134,6 @@ for (group in groups) {
                                 group,
                                 pupil,
                                 ".csv"))
-            # freqprof() %>%
-            # plot_freqprof(gg = T)
-            # 
-            # ggsave(paste0("results/test1/fp-",
-            #               group,
-            #               pupil,
-            #               behavior,
-            #               ".pdf"),
-            #      last_plot(),
-            #      device = "pdf")
           },
             error=function(e) {
               print(e)
@@ -206,142 +144,5 @@ for (group in groups) {
       if(inherits(possibleError, "error")) next
       if(inherits(possibleError, "warning")) next
     }
-  #}
-}
-
-###### Each pupil in each group with all behaviors ----
-for (group in groups) {
-  
-  for (pupil in pupils) {
-      
-      possibleError <- tryCatch({
-        result %>%
-          filter(Observation == group) %>%
-          filter(Subject == pupil) %>%
-          build_ono_data(df = as.data.frame(.),
-                         start = "Time_Relative_sf_State start",
-                         end = "Time_Relative_sf_State stop",
-                         behavior_column_name = "Behavior",
-                         select_behavior = c("all")) %>%
-          freqprof() %>%
-          plot_freqprof(gg = T)
-        
-        ggsave(paste0("results/test2/fp-",
-                      group,
-                      pupil,
-                      ".pdf"),
-               last_plot(),
-               device = "pdf")
-      },
-      error=function(e) {
-        print(e)
-      },
-      warning=function(e){
-        print(e)
-      })
-      if(inherits(possibleError, "error")) next
-      if(inherits(possibleError, "warning")) next
-    }
-  }
-
-
-#### Group analyses ----
-###### Grouped by group and behaviors -----
-for (group in groups) {
-    
-    for (behavior in behaviors) {
-      
-      possibleError <- tryCatch({
-        result %>%
-          filter(Observation == group) %>%
-          filter(Behavior == behavior) %>%
-          build_ono_data(df = as.data.frame(.),
-                         start = "Time_Relative_sf_State start",
-                         end = "Time_Relative_sf_State stop",
-                         behavior_column_name = "Behavior",
-                         select_behavior = c("all")) %>%
-          freqprof() %>%
-          plot_freqprof(gg = T)
-        
-        ggsave(paste0("results/test3/fp-",
-                      group,
-                      behavior,
-                      ".pdf"),
-               last_plot(),
-               device = "pdf")
-      },
-      error=function(e) {
-        print(e)
-      },
-      warning=function(e){
-        print(e)
-      })
-      if(inherits(possibleError, "error")) next
-      if(inherits(possibleError, "warning")) next
-    }
-  }
-
-###### Grouped by group ----
-for (group in groups) {
-  
-  for (behavior in behaviors) {
-    
-    possibleError <- tryCatch({
-      result %>%
-        filter(Observation == group) %>%
-        build_ono_data(df = as.data.frame(.),
-                       start = "Time_Relative_sf_State start",
-                       end = "Time_Relative_sf_State stop",
-                       behavior_column_name = "Behavior",
-                       select_behavior = c("all")) %>%
-        freqprof() %>%
-        plot_freqprof(gg = T)
-      
-      ggsave(paste0("results/test4/fp-",
-                    group,
-                    ".pdf"),
-             last_plot(),
-             device = "pdf")
-    },
-    error=function(e) {
-      print(e)
-    },
-    warning=function(e){
-      print(e)
-    })
-    if(inherits(possibleError, "error")) next
-    if(inherits(possibleError, "warning")) next
-  }
-}
-
-###### Grouped by behaviors
-for (behavior in behaviors) {
-    
-    possibleError <- tryCatch({
-      result %>%
-        filter(Behavior == behavior) %>%
-        unite(Behavior, c("Observation", "Behavior")) %>%
-        build_ono_data(df = as.data.frame(.),
-                       start = "Time_Relative_sf_State start",
-                       end = "Time_Relative_sf_State stop",
-                       behavior_column_name = "Behavior",
-                       select_behavior = c("all")) %>%
-        freqprof() %>%
-        plot_freqprof(gg = T)
-      
-      ggsave(paste0("results/test5/fp-",
-                    behavior,
-                    ".pdf"),
-             last_plot(),
-             device = "pdf")
-    },
-    error=function(e) {
-      print(e)
-    },
-    warning=function(e){
-      print(e)
-    })
-    if(inherits(possibleError, "error")) next
-    if(inherits(possibleError, "warning")) next
 }
 
