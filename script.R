@@ -103,6 +103,7 @@ for(b in data$Observation){
   }
 }
 
+## finding all subjects to create a vector
 subjects <- c()
 for(s in data$Subject){
   if((s %in% subjects)==0){
