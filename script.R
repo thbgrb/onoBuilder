@@ -114,20 +114,20 @@ for(s in data$Subject){
 ### for each pupils in each groups generate a .csv file
 for (group in groups) {
 
-  for (pupil in pupils) {
+  for (subject in subjects) {
       
       possibleError <- tryCatch({
           result %>%
             filter(Observation == group) %>%
-            filter(Subject == pupil) %>%
+            filter(Subject == subject) %>%
             build_ono_data(df = as.data.frame(.),
                            start = "Time_Relative_sf_State start",
                            end = "Time_Relative_sf_State stop",
                            behavior_column_name = "Behavior",
                            select_behavior = c("all")) %>%
-            write.csv(., paste0("results/test/fp-",
+            write.csv(., paste0("results/csv/fp-",
                                 group,
-                                pupil,
+                                subject,
                                 ".csv"))
           },
             error=function(e) {
