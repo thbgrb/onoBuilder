@@ -98,22 +98,17 @@ result$Behavior <-
 ## finding all groups to create a vector
 groups <- c()
 for(b in data$Observation){
-  if(!match(b, groups)){
+  if((b %in% groups)==0){
     groups <- c(groups, b)
   }
 }
 
-groups <- c("A1G2 (WIMP)",
-            "A2G2 (Paper)",
-            "A3G2 (Hybrid)",
-            "A4G2 (MTT)")
-
-subjects <- c("e1",
-            "e2",
-            "e3",
-            "e4",
-            "e5",
-            "e6")
+subjects <- c()
+for(s in data$Subject){
+  if((s %in% subjects)==0){
+    subjects <- c(subjects, s)
+  }
+}
 
 
 ### for each pupils in each groups generate a .csv file
