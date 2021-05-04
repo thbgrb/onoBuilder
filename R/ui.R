@@ -363,6 +363,16 @@ server <- function(input, output, session) {
                          Comment = col_character())
     )
     
+    return(dataToConvert)
+  }
+  
+  
+  observeEvent(input$downloadDataConverted, {
+    
+    dataToConvert <- getDataToConvert(input$fileToConvert)
+    if (is.null(dataToConvert))
+      return(NULL)
+    
     ## Transforming data into start - stop data
     result <- dataToConvert %>%
       arrange(Observation, Subject, Behavior) %>%
@@ -417,24 +427,11 @@ server <- function(input, output, session) {
              -row)
     
     ## Transforming column type
-    result$`Time_Relative_sf_State start` <- 
-      as.integer(result$`Time_Relative_sf_State start`)
+    result$`Time_Relative_sf_State start` <- as.integer(result$`Time_Relative_sf_State start`)
     
-    result$`Time_Relative_sf_State stop` <- 
-      as.integer(result$`Time_Relative_sf_State stop`)
+    result$`Time_Relative_sf_State stop` <- as.integer(result$`Time_Relative_sf_State stop`)
     
-    result$Behavior <- 
-      as.character(result$Behavior)
-    
-    return(dataToConvert)
-  }
-  
-  
-  observeEvent(input$downloadDataConverted, {
-    
-    dataToConvert <- getDataToConvert(input$fileToConvert)
-    if (is.null(dataToConvert))
-      return(NULL)
+    result$Behavior <- as.character(result$Behavior)
     
     ## finding all groups to create a vector
     groups <- c()
