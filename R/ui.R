@@ -12,6 +12,9 @@ ui <- fluidPage(titlePanel("Frequency Profile"),
       tags$hr(),
       fileInput('fileToConvert', 'Choose File',
                 accept = c('.csv')),
+      textInput(inputId = "csv_separator", label = "Separator for the csv file", value = ","),
+      tags$hr(),
+      tags$p("if everything is ok click on the convert button"),
       actionButton('downloadDataConverted', 'Convert')
     ),
     tabPanel(
@@ -330,41 +333,47 @@ server <- function(input, output, session) {
   )
   
   getDataToConvert = function(inFile) {
-    if (is.null(inFile))
-      return(NULL)
     
-    ## Importing data
-    dataToConvert <- read_csv(
-      file = inFile$datapath,
-      col_types =
-        cols(
-          Date_Time_Absolute_dmy_hmsf = col_datetime(format = "%d-%m-%Y %H:%M:%OS"),
-          Date_dmy = col_date(format = "%d-%m-%Y"),
-          Time_Absolute_hms = col_time(format = "%H:%M:%S"),
-          Time_Absolute_f = col_integer(),
-          Time_Relative_hmsf = col_time(format = "%H:%M:%OS"),
-          Time_Relative_hms = col_time(format = "%H:%M:%S"),
-          Time_Relative_f = col_integer(),
-          Time_Relative_sf = col_character(),
-          Duration_sf = col_double(),
-          Result_Container = col_character(),
-          Observation = col_factor(),
-          Event_Log = col_character(),
-          Subject = col_factor(),
-          Behavior = col_factor(),
-          #Modifier_1 = col_character(),
-          #Modifier_2 = col_character(),
-          #Modifier_3 = col_character(),
-          #Modifier_4 = col_character(),
-          #Modifier_5 = col_character(),
-          #Modifier_6 = col_character(),
-          #Modifier_7 = col_character(),
-          Event_Type = col_factor(),
-          Comment = col_character()
-        )
-    )
+    try({
     
-    return(dataToConvert)
+      if (is.null(inFile))
+        return(NULL)
+      
+      ## Importing data
+      dataToConvert <- read_delim(
+        file = inFile$datapath,
+        delim = input$csv_separator,
+        col_types =
+          cols(
+            Date_Time_Absolute_dmy_hmsf = col_datetime(format = "%d-%m-%Y %H:%M:%OS"),
+            Date_dmy = col_date(format = "%d-%m-%Y"),
+            Time_Absolute_hms = col_time(format = "%H:%M:%S"),
+            Time_Absolute_f = col_integer(),
+            Time_Relative_hmsf = col_time(format = "%H:%M:%OS"),
+            Time_Relative_hms = col_time(format = "%H:%M:%S"),
+            Time_Relative_f = col_integer(),
+            Time_Relative_sf = col_character(),
+            Duration_sf = col_double(),
+            Result_Container = col_character(),
+            Observation = col_factor(),
+            Event_Log = col_character(),
+            Subject = col_factor(),
+            Behavior = col_factor(),
+            #Modifier_1 = col_character(),
+            #Modifier_2 = col_character(),
+            #Modifier_3 = col_character(),
+            #Modifier_4 = col_character(),
+            #Modifier_5 = col_character(),
+            #Modifier_6 = col_character(),
+            #Modifier_7 = col_character(),
+            Event_Type = col_factor(),
+            Comment = col_character()
+          )
+      )
+      
+      return(dataToConvert)
+    })
+    return(NULL)
   }
   
   
