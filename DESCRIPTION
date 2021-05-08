@@ -5,7 +5,7 @@ Authors@R:
     person(given = "Thibaut",
            family = "Grebert",
            role = c("aut", "cre"),
-           email = "grebert5u@etu.univ-lorraine.fr",
+           email = "t.grebert@icloud.com",
            comment = c(ORCID = "YOUR-ORCID-ID"))
 Description: Convert qualitative data to quantitative data from The Observer for Frequency Profile analysis.
 License: GPL-3
