@@ -3,9 +3,10 @@
 server <- function(input, output){
   
   ## read and show the csv data imported
-  output$dataImported <- renderTable({
+  output$dataImported<-DT::renderDataTable({
     req(input$fileToRead)
     df <- read.csv(input$fileToRead$datapath)
+    datatable(data = df)
   })
   
   
