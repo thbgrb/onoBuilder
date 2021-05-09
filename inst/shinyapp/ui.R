@@ -9,7 +9,8 @@ ui <- dashboardPage(
     box(title = "Import your data", status = "primary",
         fileInput("fileToRead", "Select your file", multiple = FALSE)
         ),
-    box(title = "Your data imported"),
+    box(title = "Your data imported",
+        tableOutput("dataImported")),
     box(title = "Convert your data")
   )
 )

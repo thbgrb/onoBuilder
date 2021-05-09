@@ -4,9 +4,9 @@
 #'
 #' @examples
 #' if(interactive()) {
-#'   runEx()
+#'   runToc()
 #' }
-runEx <- function() {
+runToc <- function() {
   appDir <- system.file("shinyapp", package = "theObsConverter")
   if(appDir == "") {
     stop("Could not find example directory. Try reinstalling `theObsConverter`.",
