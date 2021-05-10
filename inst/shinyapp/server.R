@@ -25,6 +25,10 @@ server <- function(input, output, session){
                      header = input$header,
                      sep = input$sep,
                      quote = input$quote)
+      updateSelectInput(session, "select_time", choice=colnames(df))
+      updateSelectInput(session, "select_event_type", choice=colnames(df))
+      updateSelectInput(session, "select_group", choice=colnames(df))
+      updateSelectInput(session, "select_subject", choice=colnames(df))
       updateSelectInput(session, "select_behavior", choice=colnames(df))
     },
     error = function(e) {

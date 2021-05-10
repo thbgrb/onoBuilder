@@ -47,8 +47,11 @@ ui <- dashboardPage(
     conditionalPanel(
       condition = "output.dataImported",
       box(title = "Convert your data",
-        selectInput("select_behavior", "Select input",
-                    c("Item A", "Item B", "Item C")),
+        selectInput("select_time", label = "Time:", choices = NULL),
+        selectInput("select_event_type", label = "Event type:", choices = NULL),
+        selectInput("select_group", label = "Group:", choices = NULL),
+        selectInput("select_subject", label = "Subject:", choices = NULL),
+        selectInput("select_behavior", label = "Behavior:", choices = NULL),
         actionButton("runConvert", label = "Convert !")
         )
     )
