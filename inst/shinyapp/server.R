@@ -44,6 +44,31 @@ server <- function(input, output, session){
                            )
     
     View(result)
+    
+    #finding all groups to create a vector
+    groups <- c()
+    for(b in result$observation){
+      if((b %in% groups)==0){
+        groups <- c(groups, b)
+      }
+    }
+    
+    #finding all subjects to create a vector
+    subjects <- c()
+    for(s in result$subject){
+      if((s %in% subjects)==0){
+        subjects <- c(subjects, s)
+      }
+    }
+    
+    #finding all behaviors to create a vector
+    behaviors <- c()
+    for(b in result$behavior){
+      if((b %in% behaviors)==0){
+        behaviors <- c(behaviors, b)
+      }
+    }
+    
   })
  
 }

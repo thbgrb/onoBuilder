@@ -58,9 +58,8 @@ ui <- dashboardPage(
       condition = "output.dataImported",
       box(
         title = "Convert your data",
-        
-        selectInput("Event_Type", label = "Event type:", choices = NULL),
-        selectInput("Time_Relative_sf", label = "Time_Relative_sf:", choices = NULL),
+        selectInput("Event_Type", label = "Event Type:", choices = NULL),
+        selectInput("Time_Relative_sf", label = "Time Relative:", choices = NULL),
         hr(),
         selectInput("Observation", label = "Observation:", choices = NULL),
         selectInput("Subject", label = "Subject:", choices = NULL),
