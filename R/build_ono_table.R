@@ -9,9 +9,6 @@
 #' @return returns a \code{data.frame} of occurences - non occurences.
 #' @export
 build_ono_data <- function(df,
-                           start,
-                           end,
-                           behavior_column_name,
                            select_behavior
                            ){
   
@@ -29,19 +26,19 @@ build_ono_data <- function(df,
   ono_df <- data.frame(matrix(data = 0,
                               # +1 is required to not exceed the table. 
                               # See line 41
-                              nrow = max(df[, end] + 1), 
+                              nrow = max(df[, "end"] + 1), 
                               ncol = length(header)))
   names(ono_df) <- header
-  
+
   for (line in 1:nrow(df)){
-    x_start <- df[line, start]
-    x_end <- df[line, end]
-    #x_length <- x_start - x_end
-    y <- df[line, behavior_column_name]
     
+    x_start <- as.numeric(df[line, "start"])
+    x_end <- as.numeric(df[line, "end"]) 
+
+    y <- as.character(df[line, "behavior"])
+
     for(x in x_start:x_end) {
       ono_df[x + 1, y] <- 1
-      View(ono_df)
     }
   }
   return(ono_df)

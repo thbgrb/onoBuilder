@@ -70,13 +70,10 @@ server <- function(input, output, session){
             filter(observation == o) %>%
             filter(subject == s) %>%
             filter(behavior %in% input$selected.behaviors)%>%
-            build_ono_data(start = "start",
-                           end = "end",
-                           behavior_column_name = "behavior",
-                           select_behavior = input$selected.behaviors) %>%
-            write.csv(., paste0("export/ono-",
-                                group,
-                                subject,
+            build_ono_data(select_behavior = input$selected.behaviors) %>%
+            write.csv(., paste0("/export/ono-",
+                                o,
+                                s,
                                 ".csv"))
         },
         error=function(e) {
