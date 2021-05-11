@@ -16,7 +16,9 @@ RoxygenNote: 7.1.1
 Imports:
     DT,
     shiny,
-    shinydashboard
+    shinydashboard,
+    dplyr,
+    tidyr
 Suggests: 
     knitr,
     rmarkdown
