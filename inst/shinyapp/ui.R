@@ -64,10 +64,17 @@ ui <- dashboardPage(
         selectInput("Observation", label = "Observation:", choices = NULL),
         selectInput("Subject", label = "Subject:", choices = NULL),
         selectInput("Behavior", label = "Behavior:", choices = NULL),
+        actionButton("nextStepToConvert", label = "Next ->"),
         hr(),
-        actionButton("runConvert", label = "Convert !")
+        conditionalPanel(
+          condition = "input.nextStepToConvert",
+          checkboxGroupInput("selected.observations", "Observations:", c()),
+          checkboxGroupInput("selected.subjects", "Subjects:", c()),
+          checkboxGroupInput("selected.behaviors", "Behaviors:", c()),
+          actionButton("runConvert", label = "Convert !"),
+        )
       )
-    )
+    ),
   ),
   title = "The Observer Converter"
 )

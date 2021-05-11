@@ -5,7 +5,7 @@ library(tidyr)
 
 server <- function(input, output, session){
   
-  ## read and view of the file imported
+  #reading and viewing the file imported
   output$dataImported <- renderDataTable({
     
     req(input$fileToRead) # a file is required
@@ -20,57 +20,78 @@ server <- function(input, output, session){
     df <- get_data_table(input$fileToRead, input$header, input$sep, input$quote)
     
     updateSelectInput(session, "Event_Type", 
-                      choices = colnames(df), selected = "Event_Type")
+                      choices = colnames(DF), selected = "Event_Type")
     updateSelectInput(session, "Time_Relative_sf", 
-                      choices = colnames(df), selected = "Time_Relative_sf")
+                      choices = colnames(DF), selected = "Time_Relative_sf")
     updateSelectInput(session, "Observation",
-                      choices = colnames(df), selected = "Observation")
+                      choices = colnames(DF), selected = "Observation")
     updateSelectInput(session, "Subject", 
-                      choices = colnames(df), selected = "Subject")
+                      choices = colnames(DF), selected = "Subject")
     updateSelectInput(session, "Behavior",
-                      choices = colnames(df), selected = "Behavior")
-    
+                      choices = colnames(DF), selected = "Behavior")
   })
   
-  observeEvent(input$runConvert, {
+  #when click on next step conversion button
+  observeEvent(input$nextStepToConvert, {
     req(input$fileToRead) # a file is required
     df <- get_data_table(input$fileToRead, input$header, input$sep, input$quote)
-    result <- build_start_stop_table(df,
-                           input$Event_Type,
-                           input$Time_Relative_sf,
-                           input$Observation,
-                           input$Subject,
-                           input$Behavior
-                           )
     
-    View(result)
+    SS_TABLE <<- build_start_stop_table(df,
+                                        input$Event_Type,
+                                        input$Time_Relative_sf,
+                                        input$Observation,
+                                        input$Subject,
+                                        input$Behavior
+    )
     
-    #finding all groups to create a vector
-    groups <- c()
-    for(b in result$observation){
-      if((b %in% groups)==0){
-        groups <- c(groups, b)
+    #finding all var to create global vectors
+    OBSERVATIONS <<- get_all_observations_labels(SS_TABLE)
+    updateCheckboxGroupInput(session, "selected.observations", choices = OBSERVATIONS)
+  })
+  
+  observeEvent(input$selected.observations, {
+    SUBJECTS <<- get_all_subjects_labels(SS_TABLE, input$selected.observations)
+    updateCheckboxGroupInput(session, "selected.subjects", choices = SUBJECTS)
+  })
+  
+  observeEvent(input$selected.subjects, {
+    BEHAVIORS <<- get_all_behaviors_labels(SS_TABLE, input$selected.observations, input$selected.subjects)
+    updateCheckboxGroupInput(session, "selected.behaviors", choices = BEHAVIORS)
+  })
+  
+  #when click on conversion button
+  observeEvent(input$runConvert, {
+    
+    for(o in input$selected.observations){
+      for(s in input$selected.subjects){
+        possibleError <- tryCatch({
+
+          result <- SS_TABLE %>%
+            filter(observation == o) %>%
+            filter(subject == s) %>%
+            filter(behavior %in% input$selected.behaviors)%>%
+            build_ono_data(start = "start",
+                           end = "end",
+                           behavior_column_name = "behavior",
+                           select_behavior = input$selected.behaviors) %>%
+            write.csv(., paste0("export/ono-",
+                                group,
+                                subject,
+                                ".csv"))
+        },
+        error=function(e) {
+          print(e)
+        },
+        warning=function(e){
+          print(e)
+        })
+        if(inherits(possibleError, "error")) next
+        if(inherits(possibleError, "warning")) next
+        }
       }
-    }
     
-    #finding all subjects to create a vector
-    subjects <- c()
-    for(s in result$subject){
-      if((s %in% subjects)==0){
-        subjects <- c(subjects, s)
-      }
-    }
-    
-    #finding all behaviors to create a vector
-    behaviors <- c()
-    for(b in result$behavior){
-      if((b %in% behaviors)==0){
-        behaviors <- c(behaviors, b)
-      }
-    }
     
   })
- 
 }
 
 shinyServer(server)

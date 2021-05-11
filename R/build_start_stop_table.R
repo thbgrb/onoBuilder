@@ -49,14 +49,14 @@ build_start_stop_table <- function(data,
   
   #transforming columns name
   names(result)[1] <- 'start'
-  names(result)[2] <- 'stop'
+  names(result)[2] <- 'end'
   names(result)[3] <- 'observation'
   names(result)[4] <- 'subject'
   names(result)[5] <- 'behavior'
   
   #transforming columns type
   result$start <- as.integer(result$start)
-  result$stop <- as.integer(result$stop)
+  result$end <- as.integer(result$end)
   result$behavior <- as.character(result$behavior)
   
   return(result)

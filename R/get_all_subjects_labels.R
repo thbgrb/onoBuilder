@@ -1,0 +1,19 @@
+#' finding all subjects to create a vector
+#'
+#' @param data a data table normalized by the build_start_stop_table function
+#'
+#' @return a vector which contain all the subjects observed 
+#' @export
+get_all_subjects_labels <- function(data, observation_column){
+ 
+   data <- data %>%
+    filter(observation %in% observation_column)
+  
+  subjects <- c()
+  for(s in data$subject){
+    if((s %in% subjects)==0){
+      subjects <- c(subjects, s)
+    }
+  }
+  return(subjects)
+}
