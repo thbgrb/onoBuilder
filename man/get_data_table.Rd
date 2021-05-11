@@ -7,13 +7,13 @@
 get_data_table(inFile, header, sep, quote)
 }
 \arguments{
-\item{inFile}{}
+\item{inFile}{the file to import}
 
-\item{header}{}
+\item{header}{if the first line of the file is the header of the table}
 
-\item{sep}{}
+\item{sep}{the separator used in the file}
 
-\item{quote}{}
+\item{quote}{the quote used in the file}
 }
 \value{
 the table table imported

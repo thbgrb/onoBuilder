@@ -4,10 +4,27 @@
 \alias{build_start_stop_table}
 \title{Transforming data into start - stop data}
 \usage{
-build_start_stop_table(data)
+build_start_stop_table(
+  data,
+  Event_Type,
+  Time_Relative_sf,
+  Observation,
+  Subject,
+  Behavior
+)
 }
 \arguments{
-\item{data}{}
+\item{data}{the data file to transform}
+
+\item{Event_Type}{the event type column}
+
+\item{Time_Relative_sf}{the time relative column}
+
+\item{Observation}{the observation column}
+
+\item{Subject}{the subject column}
+
+\item{Behavior}{the behavior column}
 }
 \value{
 the table transform into a start stop table
