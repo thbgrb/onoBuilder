@@ -18,21 +18,57 @@ build_start_stop_table <- function(data,
                                    Observation,
                                    Subject,
                                    Behavior) {
-  #get data file
-  result <- data %>%
+  
+  #cleaning empty columns
+  data <- data %>%
+    filter(Event_Type != "") %>%
+    filter(Observation != "") %>%
+    filter(Behavior != "") %>%
+    filter(Subject != "") 
+  
+  #FIRST TABLE: create the start stop table for the state point events
+  res_point <- data %>%
+    
+    #taking only state point rows
+    filter(Event_Type == "State point") %>%
+    
+    #select required columns
+    select(Time_Relative_sf,
+           Observation,
+           Subject,
+           Behavior)
+  
+  #transforming columns name
+  names(res_point)[1] <- 'start' 
+  names(res_point)[2] <- 'observation'
+  names(res_point)[3] <- 'subject'
+  names(res_point)[4] <- 'behavior' 
+  
+  #transforming columns type
+  res_point$start <- as.integer(res_point$start)
+  res_point$observation <- as.character(res_point$observation)
+  res_point$subject <- as.character(res_point$subject)
+  res_point$behavior <- as.character(res_point$behavior)
+    
+  #duplicate the time column
+  res_point <- cbind(res_point, end=res_point$start)
+    
+  #arrange order of columns
+  res_point <- res_point[,c(1, 5, 2, 3, 4)]
+  
+  
+  #SECOND TABLE: create the start stop table for the start/stop events
+  res_ss <- data %>%
+    
+    #not taking state point rows
+    filter(Event_Type != "State point") %>%
     
     #select required columns
     select(Event_Type,
            Time_Relative_sf,
            Observation,
            Subject,
-           Behavior,)  %>%
-    
-    #cleaning empty columns
-    filter(Event_Type != "") %>%
-    filter(Observation != "") %>%
-    filter(Behavior != "") %>%
-    filter(Subject != "") %>%
+           Behavior)  %>%
     
     #arranging data in a good order
     arrange(Observation, Subject, Behavior, Time_Relative_sf) %>%
@@ -48,16 +84,22 @@ build_start_stop_table <- function(data,
            Behavior)
   
   #transforming columns name
-  names(result)[1] <- 'start'
-  names(result)[2] <- 'end'
-  names(result)[3] <- 'observation'
-  names(result)[4] <- 'subject'
-  names(result)[5] <- 'behavior'
+  names(res_ss)[1] <- 'start'
+  names(res_ss)[2] <- 'end'
+  names(res_ss)[3] <- 'observation'
+  names(res_ss)[4] <- 'subject'
+  names(res_ss)[5] <- 'behavior'
   
   #transforming columns type
-  result$start <- as.integer(result$start)
-  result$end <- as.integer(result$end)
-  result$behavior <- as.character(result$behavior)
+  res_ss$start <- as.integer(res_ss$start)
+  res_ss$end <- as.integer(res_ss$end)
+  res_ss$observation <- as.character(res_ss$observation)
+  res_ss$subject <- as.character(res_ss$subject)
+  res_ss$behavior <- as.character(res_ss$behavior)
   
-  return(result)
+  #FINAL TABLE: join the 2 tables created before
+  res <- bind_rows(res_point, res_ss) 
+  res <- arrange(res, start)
+  
+  return(res)
 }

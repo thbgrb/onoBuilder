@@ -1,24 +1,20 @@
 ### shiny app server
 
-library(dplyr)
-library(tidyr)
+library(tidyverse)
 
 server <- function(input, output, session){
   
-  #reading and viewing the file imported
-  output$dataImported <- renderDataTable({
+  #observe the import button
+  observeEvent(input$import, {
     
-    req(input$fileToRead) # a file is required
-    df <- get_data_table(input$fileToRead, input$header, input$sep, input$quote)
+    #reading and viewing the file imported
+    output$dataImportedView <- renderDataTable({
+      req(input$fileToRead) # a file is required
+      df <- get_data_table(input$fileToRead, input$header, input$sep, input$quote)
+      datatable(data = df)
+    })
     
-    datatable(data = df)
-  })
-  
-  observe({
-    
-    req(input$fileToRead) # a file is required
-    df <- get_data_table(input$fileToRead, input$header, input$sep, input$quote)
-    
+    #update items 
     updateSelectInput(session, "Event_Type", 
                       choices = colnames(DF), selected = "Event_Type")
     updateSelectInput(session, "Time_Relative_sf", 
@@ -32,7 +28,7 @@ server <- function(input, output, session){
   })
   
   #when click on next step conversion button
-  observeEvent(input$nextStepToConvert, {
+  observeEvent(input$buildStartStop, {
     req(input$fileToRead) # a file is required
     df <- get_data_table(input$fileToRead, input$header, input$sep, input$quote)
     
@@ -43,6 +39,11 @@ server <- function(input, output, session){
                                         input$Subject,
                                         input$Behavior
     )
+    
+    #reading and viewing the file imported
+    output$startStopView <- renderDataTable({
+      datatable(data = SS_TABLE)
+    })
     
     #finding all var to create global vectors
     OBSERVATIONS <<- get_all_observations_labels(SS_TABLE)
@@ -71,7 +72,7 @@ server <- function(input, output, session){
             filter(subject == s) %>%
             filter(behavior %in% input$selected.behaviors)%>%
             build_ono_data(select_behavior = input$selected.behaviors) %>%
-            write.csv(., paste0("/export/ono-",
+            write.csv(., paste0("export/ono-",
                                 o,
                                 s,
                                 ".csv"))

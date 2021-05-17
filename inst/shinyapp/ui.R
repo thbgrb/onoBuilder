@@ -5,78 +5,93 @@ library(shinydashboard)
 library(DT)
 
 ui <- dashboardPage(
+  
+  #header of the page
   dashboardHeader(title = "The Observer Converter", titleWidth = 300),
   
+  #sidebar of the bar (hidden)
   dashboardSidebar(disable = TRUE),
   
-  dashboardBody(
-    
-    ## box for the import
-    box(
-      title = "Import your data",
-      status = "primary",
-      
-      # choose the file to import
-      fileInput("fileToRead", "Select your file", multiple = FALSE),
-      
-      hr(),
-      
-      # select if the file imported has a header
-      checkboxInput("header", "Header", TRUE),
-      
-      # select separator in the file imported
-      radioButtons(
-        "sep",
-        "Separator",
-        choices = c(
-          Comma = ",",
-          Semicolon = ";",
-          Tab = "\t"
+  #content of the page
+  dashboardBody(fluidRow(
+    column(width = 4,
+      ## box for the import
+      box(width = NULL,
+          title = "Import your data",
+          status = "primary",
+        # choose the file to import
+        fileInput("fileToRead", "Select your file", multiple = FALSE),
+        
+        hr(),
+        
+        # select if the file imported has a header
+        checkboxInput("header", "Header", TRUE),
+        
+        # select separator in the file imported
+        radioButtons(
+          "sep",
+          "Separator",
+          choices = c(
+            Comma = ",",
+            Semicolon = ";",
+            Tab = "\t"
+          ),
+          selected = ","
         ),
-        selected = ","
+        
+        # select quote in the file imported
+        radioButtons(
+          "quote",
+          "Quote",
+          choices = c(
+            None = "",
+            "Double Quote" = '"',
+            "Single Quote" = "'"
+          ),
+          selected = '"'
+        ),
+        
+        actionButton("import", label = "Import")
       ),
       
-      # select quote in the file imported
-      radioButtons(
-        "quote",
-        "Quote",
-        choices = c(
-          None = "",
-          "Double Quote" = '"',
-          "Single Quote" = "'"
-        ),
-        selected = '"'
-      )
-    ),
-    
-    ## box for the view
-    box(title = "Your data imported",
-        div(style = 'overflow-x: scroll', dataTableOutput('dataImported'))),
-    
-    ## box for the conversion
-    conditionalPanel(
-      condition = "output.dataImported",
-      box(
-        title = "Convert your data",
-        selectInput("Event_Type", label = "Event Type:", choices = NULL),
-        selectInput("Time_Relative_sf", label = "Time Relative:", choices = NULL),
-        hr(),
-        selectInput("Observation", label = "Observation:", choices = NULL),
-        selectInput("Subject", label = "Subject:", choices = NULL),
-        selectInput("Behavior", label = "Behavior:", choices = NULL),
-        actionButton("nextStepToConvert", label = "Next ->"),
-        hr(),
-        conditionalPanel(
-          condition = "input.nextStepToConvert",
+      ## box for the conversion
+      conditionalPanel(
+        condition = "input.import",
+        box(width = NULL,
+          title = "Convert your data",
+          selectInput("Event_Type", label = "Event Type:", choices = NULL),
+          selectInput("Time_Relative_sf", label = "Time Relative:", choices = NULL),
+          hr(),
+          selectInput("Observation", label = "Observation:", choices = NULL),
+          selectInput("Subject", label = "Subject:", choices = NULL),
+          selectInput("Behavior", label = "Behavior:", choices = NULL),
+          actionButton("buildStartStop", label = "Create Start Stop Table"),
+        )
+      ),
+      conditionalPanel(
+        condition = "input.buildStartStop",
+        box(width = NULL,
           checkboxGroupInput("selected.observations", "Observations:", c()),
           checkboxGroupInput("selected.subjects", "Subjects:", c()),
           checkboxGroupInput("selected.behaviors", "Behaviors:", c()),
-          actionButton("runConvert", label = "Convert !"),
+          actionButton("createOno", label = "Convert")
         )
       )
     ),
-  ),
+    column(width = 8,
+      ## box for the view of the imported file
+      box(width = NULL,
+        title = "Your data imported",
+        div(style = 'overflow-x: scroll', dataTableOutput('dataImportedView'))
+      ),
+      ## box for the view of the start/stop table
+      box(width = NULL,
+          title = "The Start/Stop table",
+          div(style = 'overflow-x: scroll', dataTableOutput('startStopView'))
+      )
+    ),
   title = "The Observer Converter"
+  ))
 )
 
 shinyUI(ui)

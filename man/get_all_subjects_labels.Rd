@@ -4,7 +4,7 @@
 \alias{get_all_subjects_labels}
 \title{finding all subjects to create a vector}
 \usage{
-get_all_subjects_labels(data)
+get_all_subjects_labels(data, observation_column)
 }
 \arguments{
 \item{data}{a data table normalized by the build_start_stop_table function}
