@@ -1,7 +1,5 @@
 ### shiny app server
 
-library(tidyverse)
-
 server <- function(input, output, session){
   
   #observe the import button
@@ -16,15 +14,15 @@ server <- function(input, output, session){
     
     #update items 
     updateSelectInput(session, "Event_Type", 
-                      choices = colnames(DF), selected = "Event_Type")
+                      choices = colnames(df), selected = "Event_Type")
     updateSelectInput(session, "Time_Relative_sf", 
-                      choices = colnames(DF), selected = "Time_Relative_sf")
+                      choices = colnames(df), selected = "Time_Relative_sf")
     updateSelectInput(session, "Observation",
-                      choices = colnames(DF), selected = "Observation")
+                      choices = colnames(df), selected = "Observation")
     updateSelectInput(session, "Subject", 
-                      choices = colnames(DF), selected = "Subject")
+                      choices = colnames(df), selected = "Subject")
     updateSelectInput(session, "Behavior",
-                      choices = colnames(DF), selected = "Behavior")
+                      choices = colnames(df), selected = "Behavior")
   })
   
   #when click on next step conversion button

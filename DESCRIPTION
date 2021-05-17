@@ -18,7 +18,8 @@ Imports:
     shiny,
     shinydashboard,
     dplyr,
-    tidyr
+    tidyr,
+    readxl
 Suggests: 
     knitr,
     rmarkdown
