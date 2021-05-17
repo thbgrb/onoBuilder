@@ -24,36 +24,39 @@ ui <- dashboardPage(
                   "Select your file",
                   multiple = FALSE,accept = c(".csv", ".xlsx", "xls")
                   ),
-        
-        hr(),
-        
-        # select if the file imported has a header
-        checkboxInput("header", "Header", TRUE),
-        
-        # select separator in the file imported
-        radioButtons(
-          "sep",
-          "Separator",
-          choices = c(
-            Comma = ",",
-            Semicolon = ";",
-            Tab = "\t"
+        conditionalPanel(
+          condition = "output.cond == true",
+          
+          hr(),
+          
+          # select if the file imported has a header
+          checkboxInput("header", "Header", TRUE),
+          
+          # select separator in the file imported
+          radioButtons(
+            "sep",
+            "Separator",
+            choices = c(
+              Comma = ",",
+              Semicolon = ";",
+              Tab = "\t"
+            ),
+            selected = ","
           ),
-          selected = ","
-        ),
-        
-        # select quote in the file imported
-        radioButtons(
-          "quote",
-          "Quote",
-          choices = c(
-            None = "",
-            "Double Quote" = '"',
-            "Single Quote" = "'"
+          
+          # select quote in the file imported
+          radioButtons(
+            "quote",
+            "Quote",
+            choices = c(
+              None = "",
+              "Double Quote" = '"',
+              "Single Quote" = "'"
+            ),
+            selected = '"'
           ),
-          selected = '"'
-        )
-      ),
+        
+      )),
       
       ## box for the conversion
       box(width = NULL,

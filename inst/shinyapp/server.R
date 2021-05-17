@@ -5,6 +5,15 @@ library(tidyr)
 
 server <- function(input, output, session){
   
+  output$cond <- reactive({
+    req(input$fileToRead) # a file is required
+    fileExtension = tolower(substr(input$fileToRead$name, 
+                                   nchar(input$fileToRead$name) - 3,
+                                   nchar(input$fileToRead$name)))
+    (fileExtension == ".csv")
+  })
+  outputOptions(output, "cond", suspendWhenHidden = FALSE)
+  
   #reading and viewing the file imported
   observe(output$dataImportedView <- renderDataTable({
     req(input$fileToRead) # a file is required
