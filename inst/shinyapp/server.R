@@ -1,5 +1,8 @@
 ### shiny app server
 
+library(dplyr)
+library(tidyr)
+
 server <- function(input, output, session){
   
   #observe the import button
@@ -8,29 +11,29 @@ server <- function(input, output, session){
     #reading and viewing the file imported
     output$dataImportedView <- renderDataTable({
       req(input$fileToRead) # a file is required
-      df <- get_data_table(input$fileToRead, input$header, input$sep, input$quote)
-      datatable(data = df)
+      DF <<- get_data_table(input$fileToRead, input$header, input$sep, input$quote)
+      datatable(data = DF)
     })
     
     #update items 
     updateSelectInput(session, "Event_Type", 
-                      choices = colnames(df), selected = "Event_Type")
+                      choices = colnames(DF), selected = "Event_Type")
     updateSelectInput(session, "Time_Relative_sf", 
-                      choices = colnames(df), selected = "Time_Relative_sf")
+                      choices = colnames(DF), selected = "Time_Relative_sf")
     updateSelectInput(session, "Observation",
-                      choices = colnames(df), selected = "Observation")
+                      choices = colnames(DF), selected = "Observation")
     updateSelectInput(session, "Subject", 
-                      choices = colnames(df), selected = "Subject")
+                      choices = colnames(DF), selected = "Subject")
     updateSelectInput(session, "Behavior",
-                      choices = colnames(df), selected = "Behavior")
+                      choices = colnames(DF), selected = "Behavior")
   })
   
   #when click on next step conversion button
   observeEvent(input$buildStartStop, {
     req(input$fileToRead) # a file is required
-    df <- get_data_table(input$fileToRead, input$header, input$sep, input$quote)
+    #df <- get_data_table(input$fileToRead, input$header, input$sep, input$quote)
     
-    SS_TABLE <<- build_start_stop_table(df,
+    SS_TABLE <<- build_start_stop_table(DF,
                                         input$Event_Type,
                                         input$Time_Relative_sf,
                                         input$Observation,
