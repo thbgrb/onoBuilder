@@ -25,7 +25,7 @@ get_data_table <- function(inFile, header, sep, quote){
   tryCatch({
     if(fileExtension == ".csv"){
       df <- read.csv(inFile$datapath, header, sep, quote)
-    } else if(fileExtension == "xlsx"){
+    } else if(fileExtension == "xlsx" | fileExtension == ".xls"){
       df <- read_excel(inFile$datapath)
     }
   },

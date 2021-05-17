@@ -5,15 +5,15 @@ library(tidyr)
 
 server <- function(input, output, session){
   
+  #reading and viewing the file imported
+  observe(output$dataImportedView <- renderDataTable({
+    req(input$fileToRead) # a file is required
+    DF <<- get_data_table(input$fileToRead, input$header, input$sep, input$quote)
+    datatable(data = DF)
+  }))
+  
   #observe the import button
-  observeEvent(input$import, {
-    
-    #reading and viewing the file imported
-    output$dataImportedView <- renderDataTable({
-      req(input$fileToRead) # a file is required
-      DF <<- get_data_table(input$fileToRead, input$header, input$sep, input$quote)
-      datatable(data = DF)
-    })
+  observeEvent(c(input$header, input$sep, input$quote), {
     
     #update items 
     updateSelectInput(session, "Event_Type", 

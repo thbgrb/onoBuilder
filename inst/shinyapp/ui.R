@@ -20,7 +20,10 @@ ui <- dashboardPage(
           title = "Import your data",
           status = "primary",
         # choose the file to import
-        fileInput("fileToRead", "Select your file", multiple = FALSE),
+        fileInput("fileToRead", 
+                  "Select your file",
+                  multiple = FALSE,accept = c(".csv", ".xlsx", "xls")
+                  ),
         
         hr(),
         
@@ -49,24 +52,19 @@ ui <- dashboardPage(
             "Single Quote" = "'"
           ),
           selected = '"'
-        ),
-        
-        actionButton("import", label = "Import")
+        )
       ),
       
       ## box for the conversion
-      conditionalPanel(
-        condition = "input.import",
-        box(width = NULL,
-          title = "Convert your data",
-          selectInput("Event_Type", label = "Event Type:", choices = NULL),
-          selectInput("Time_Relative_sf", label = "Time Relative:", choices = NULL),
-          hr(),
-          selectInput("Observation", label = "Observation:", choices = NULL),
-          selectInput("Subject", label = "Subject:", choices = NULL),
-          selectInput("Behavior", label = "Behavior:", choices = NULL),
-          actionButton("buildStartStop", label = "Create Start Stop Table"),
-        )
+      box(width = NULL,
+        title = "Convert your data",
+        selectInput("Event_Type", label = "Event Type:", choices = NULL),
+        selectInput("Time_Relative_sf", label = "Time Relative:", choices = NULL),
+        hr(),
+        selectInput("Observation", label = "Observation:", choices = NULL),
+        selectInput("Subject", label = "Subject:", choices = NULL),
+        selectInput("Behavior", label = "Behavior:", choices = NULL),
+        actionButton("buildStartStop", label = "Create Start Stop Table"),
       ),
       conditionalPanel(
         condition = "input.buildStartStop",
