@@ -62,30 +62,31 @@ server <- function(input, output, session){
     
     #finding all var to create global vectors
     OBSERVATIONS <<- get_all_observations_labels(SS_TABLE)
-    updateCheckboxGroupInput(session, "selected.observations", choices = OBSERVATIONS)
+    updateCheckboxGroupInput(session, "selected.observations", choices = OBSERVATIONS, selected = OBSERVATIONS)
   })
   
   observeEvent(input$selected.observations, {
     SUBJECTS <<- get_all_subjects_labels(SS_TABLE, input$selected.observations)
-    updateCheckboxGroupInput(session, "selected.subjects", choices = SUBJECTS)
+    updateCheckboxGroupInput(session, "selected.subjects", choices = SUBJECTS, selected = SUBJECTS)
   })
   
   observeEvent(input$selected.subjects, {
     BEHAVIORS <<- get_all_behaviors_labels(SS_TABLE, input$selected.observations, input$selected.subjects)
-    updateCheckboxGroupInput(session, "selected.behaviors", choices = BEHAVIORS)
+    updateCheckboxGroupInput(session, "selected.behaviors", choices = BEHAVIORS, selected = BEHAVIORS)
   })
   
   #when click on conversion button
   observeEvent(input$runOno, {
+
     for(o in input$selected.observations){
       for(s in input$selected.subjects){
         possibleError <- tryCatch({
-
+          
           result <- SS_TABLE %>%
             filter(observation == o) %>%
             filter(subject == s) %>%
             filter(behavior %in% input$selected.behaviors)%>%
-            build_ono_data() 
+            build_ono_data() %>%
             write.csv(., paste0("ono-",
                                 o,
                                 s,
