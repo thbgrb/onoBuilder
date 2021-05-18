@@ -8,19 +8,17 @@
 #'
 #' @return returns a \code{data.frame} of occurences - non occurences.
 #' @export
-build_ono_data <- function(df,
-                           select_behavior
-                           ){
+build_ono_data <- function(df){
   
   # Building the table that will contain the user-specified behaviors, occurrences and 
   # non-occurrences of the behaviors. The timeline is also considered.
   
   # Creation of the header
-  # if (select_behavior[1]  == "all" && length(select_behavior) == 1) {
-  #   header <- sort(unique(df[, behavior_column_name])) 
-  # } else {
-    header <- select_behavior
-  #}
+#if (select_behavior[1]  == "all" && length(select_behavior) == 1) {
+    header <- sort(unique(df[, "behavior"]))
+ # } else {
+  #  header <- select_behavior
+ # }
   
   # Creation of the table
   ono_df <- data.frame(matrix(data = 0,
@@ -41,6 +39,7 @@ build_ono_data <- function(df,
       ono_df[x + 1, y] <- 1
     }
   }
+
   return(ono_df)
 }
 

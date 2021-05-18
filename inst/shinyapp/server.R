@@ -71,7 +71,7 @@ server <- function(input, output, session){
   })
   
   #when click on conversion button
-  observeEvent(input$runConvert, {
+  observeEvent(input$runOno, {
     
     for(o in input$selected.observations){
       for(s in input$selected.subjects){
@@ -81,8 +81,8 @@ server <- function(input, output, session){
             filter(observation == o) %>%
             filter(subject == s) %>%
             filter(behavior %in% input$selected.behaviors)%>%
-            build_ono_data(select_behavior = input$selected.behaviors) %>%
-            write.csv(., paste0("export/ono-",
+            build_ono_data() %>%
+            write.csv(., paste0("ono-",
                                 o,
                                 s,
                                 ".csv"))

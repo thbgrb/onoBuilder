@@ -75,7 +75,7 @@ ui <- dashboardPage(
           checkboxGroupInput("selected.observations", "Observations:", c()),
           checkboxGroupInput("selected.subjects", "Subjects:", c()),
           checkboxGroupInput("selected.behaviors", "Behaviors:", c()),
-          actionButton("createOno", label = "Convert")
+          actionButton("runOno", label = "Convert")
         )
       )
     ),
