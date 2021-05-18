@@ -6,6 +6,7 @@
 #' @export
 get_all_behaviors_labels <- function(data, observation_column, subject_column){
   
+  print('cou')
   data <- data %>%
     filter(observation %in% observation_column) %>%
     filter(subject %in% subject_column)
@@ -16,6 +17,8 @@ get_all_behaviors_labels <- function(data, observation_column, subject_column){
       behaviors <- c(behaviors, b)
     }
   }
-  behaviors <- order(behaviors)
-  return(behaviors)
+  print(behaviors)
+  print(sort(behaviors))
+
+  return(sort(behaviors))
 }

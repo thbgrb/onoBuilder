@@ -15,5 +15,8 @@ get_all_subjects_labels <- function(data, observation_column){
       subjects <- c(subjects, s)
     }
   }
+  
+  subjects <- sort(subjects)
+                   
   return(subjects)
 }

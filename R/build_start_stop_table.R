@@ -99,7 +99,7 @@ build_start_stop_table <- function(data,
   
   #FINAL TABLE: join the 2 tables created before
   res <- bind_rows(res_point, res_ss) 
-  res <- arrange(res, start)
+  res <- arrange(res, res$start)
   
   return(res)
 }
