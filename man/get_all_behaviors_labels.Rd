@@ -8,6 +8,10 @@ get_all_behaviors_labels(data, observation_column, subject_column)
 }
 \arguments{
 \item{data}{a data table normalized by the build_start_stop_table function}
+
+\item{observation_column}{name of the observation column}
+
+\item{subject_column}{name of the subject column}
 }
 \value{
 a vector which contain all the behaviors observed

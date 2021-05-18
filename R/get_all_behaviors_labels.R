@@ -1,15 +1,16 @@
 #' finding all behaviors to create a vector
 #'
 #' @param data a data table normalized by the build_start_stop_table function
+#' @param observation_column name of the observation column
+#' @param subject_column name of the subject column
 #'
 #' @return a vector which contain all the behaviors observed 
 #' @export
 get_all_behaviors_labels <- function(data, observation_column, subject_column){
   
-  print('cou')
   data <- data %>%
-    filter(observation %in% observation_column) %>%
-    filter(subject %in% subject_column)
+    filter(data$observation %in% observation_column) %>%
+    filter(data$subject %in% subject_column)
   
   behaviors <- c()
   for(b in data$behavior){
@@ -17,8 +18,6 @@ get_all_behaviors_labels <- function(data, observation_column, subject_column){
       behaviors <- c(behaviors, b)
     }
   }
-  print(behaviors)
-  print(sort(behaviors))
 
   return(sort(behaviors))
 }

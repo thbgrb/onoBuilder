@@ -7,7 +7,7 @@
 get_all_subjects_labels <- function(data, observation_column){
  
    data <- data %>%
-    filter(observation %in% observation_column)
+    filter(data$observation %in% observation_column)
   
   subjects <- c()
   for(s in data$subject){
@@ -15,8 +15,6 @@ get_all_subjects_labels <- function(data, observation_column){
       subjects <- c(subjects, s)
     }
   }
-  
-  subjects <- sort(subjects)
                    
-  return(subjects)
+  return(sort(subjects))
 }

@@ -5,12 +5,14 @@
 #' @return a vector which contain all the observations observed 
 #' @export
 get_all_observations_labels <- function(data){
+  
   observations <- c()
+  
   for(o in data$observation){
     if((o %in% observations)==0){
       observations <- c(observations, o)
     }
   }
-  observations <- arrange(observations, data$observation)
-  return(observations)
+
+  return(sort(observations))
 }
