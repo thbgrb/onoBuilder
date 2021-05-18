@@ -5,6 +5,20 @@ library(tidyr)
 
 server <- function(input, output, session){
   
+  updateConfigCsv <- function(){
+    #update items 
+    updateSelectInput(session, "Event_Type", 
+                      choices = colnames(DF), selected = "Event_Type")
+    updateSelectInput(session, "Time_Relative_sf", 
+                      choices = colnames(DF), selected = "Time_Relative_sf")
+    updateSelectInput(session, "Observation",
+                      choices = colnames(DF), selected = "Observation")
+    updateSelectInput(session, "Subject", 
+                      choices = colnames(DF), selected = "Subject")
+    updateSelectInput(session, "Behavior",
+                      choices = colnames(DF), selected = "Behavior")
+  }
+  
   output$cond <- reactive({
     req(input$fileToRead) # a file is required
     fileExtension = tolower(substr(input$fileToRead$name, 
@@ -18,23 +32,14 @@ server <- function(input, output, session){
   observe(output$dataImportedView <- renderDataTable({
     req(input$fileToRead) # a file is required
     DF <<- get_data_table(input$fileToRead, input$header, input$sep, input$quote)
+    updateConfigCsv()
     datatable(data = DF)
   }))
   
   #observe the import button
   observeEvent(c(input$header, input$sep, input$quote), {
-    
-    #update items 
-    updateSelectInput(session, "Event_Type", 
-                      choices = colnames(DF), selected = "Event_Type")
-    updateSelectInput(session, "Time_Relative_sf", 
-                      choices = colnames(DF), selected = "Time_Relative_sf")
-    updateSelectInput(session, "Observation",
-                      choices = colnames(DF), selected = "Observation")
-    updateSelectInput(session, "Subject", 
-                      choices = colnames(DF), selected = "Subject")
-    updateSelectInput(session, "Behavior",
-                      choices = colnames(DF), selected = "Behavior")
+    req(input$fileToRead)
+    updateConfigCsv()
   })
   
   #when click on next step conversion button
@@ -72,7 +77,6 @@ server <- function(input, output, session){
   
   #when click on conversion button
   observeEvent(input$runOno, {
-    
     for(o in input$selected.observations){
       for(s in input$selected.subjects){
         possibleError <- tryCatch({
@@ -81,7 +85,7 @@ server <- function(input, output, session){
             filter(observation == o) %>%
             filter(subject == s) %>%
             filter(behavior %in% input$selected.behaviors)%>%
-            build_ono_data() %>%
+            build_ono_data() 
             write.csv(., paste0("ono-",
                                 o,
                                 s,

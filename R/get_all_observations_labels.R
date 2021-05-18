@@ -11,5 +11,6 @@ get_all_observations_labels <- function(data){
       observations <- c(observations, o)
     }
   }
+  observations <- arrange(observations, data$observation)
   return(observations)
 }

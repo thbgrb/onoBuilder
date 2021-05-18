@@ -16,5 +16,6 @@ get_all_behaviors_labels <- function(data, observation_column, subject_column){
       behaviors <- c(behaviors, b)
     }
   }
+  behaviors <- order(behaviors)
   return(behaviors)
 }
