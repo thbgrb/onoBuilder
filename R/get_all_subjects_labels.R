@@ -1,6 +1,7 @@
 #' finding all subjects to create a vector
 #'
 #' @param data a data table normalized by the build_start_stop_table function
+#' @param observation_column name of the observation column
 #'
 #' @return a vector which contain all the subjects observed 
 #' @export

@@ -31,7 +31,7 @@ get_data_table <- function(inFile, header, sep, quote){
   },
   error = function(e) {
     #return a safeError if a parsing error occurs
-    stop(safeError(e))
+    print(e)
   })
   
   return(df)

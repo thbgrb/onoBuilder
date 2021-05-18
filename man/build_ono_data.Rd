@@ -7,15 +7,8 @@
 build_ono_data(df)
 }
 \arguments{
-\item{df}{a \code{data.param} with a column of timestamps and a column of behaviors.}
-
-\item{start}{indicates the name of the state start column.}
-
-\item{end}{indicates the name of the state end column.}
-
-\item{behavior_column_name}{specifies the name of the behaviour column.}
-
-\item{select_behavior}{allows you to choose all the behaviors to be taken into account or specify the behaviors to be taken into account using a vector.}
+\item{df}{a \code{data.param} with a column of timestamps and a column of behaviors.
+#'}
 }
 \value{
 returns a \code{data.frame} of occurences - non occurences.

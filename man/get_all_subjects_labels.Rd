@@ -8,6 +8,8 @@ get_all_subjects_labels(data, observation_column)
 }
 \arguments{
 \item{data}{a data table normalized by the build_start_stop_table function}
+
+\item{observation_column}{name of the observation column}
 }
 \value{
 a vector which contain all the subjects observed

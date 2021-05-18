@@ -1,11 +1,7 @@
 #' Transform data into a table of occurrences - non occurrences
 #'
 #' @param df a \code{data.param} with a column of timestamps and a column of behaviors.
-#' @param start indicates the name of the state start column.
-#' @param end indicates the name of the state end column.
-#' @param behavior_column_name specifies the name of the behaviour column.
-#' @param select_behavior allows you to choose all the behaviors to be taken into account or specify the behaviors to be taken into account using a vector.
-#'
+#' #'
 #' @return returns a \code{data.frame} of occurences - non occurences.
 #' @export
 build_ono_data <- function(df){
