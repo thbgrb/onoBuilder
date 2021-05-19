@@ -25,7 +25,7 @@ ui <- dashboardPage(
                   multiple = FALSE,accept = c(".csv", ".xlsx", "xls")
                   ),
         conditionalPanel(
-          condition = "output.cond == true",
+          condition = "output.isCsvFile",
           
           hr(),
           

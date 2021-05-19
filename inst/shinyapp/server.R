@@ -1,148 +1,201 @@
-### shiny app server
-
 library(dplyr)
 library(tidyr)
 
-server <- function(input, output, session){
+### Define the shiny app server
+server <- function(input, output, session) {
   
-  updateConfigCsv <- function(){
-    #update items 
-    updateSelectInput(session, "Event_Type", 
-                      choices = colnames(DF), selected = "Event_Type")
-    updateSelectInput(session, "Time_Relative_sf", 
-                      choices = colnames(DF), selected = "Time_Relative_sf")
-    updateSelectInput(session, "Observation",
-                      choices = colnames(DF), selected = "Observation")
-    updateSelectInput(session, "Subject", 
-                      choices = colnames(DF), selected = "Subject")
-    updateSelectInput(session, "Behavior",
-                      choices = colnames(DF), selected = "Behavior")
+  ### Function which update columns names inputs
+  updateColNamesInput <- function() {
+    updateSelectInput(session = session,
+                      inputId = "Event_Type",
+                      choices = colnames(dataImported),
+                      selected = "Event_Type")
+    updateSelectInput(session = session,
+                      inputId = "Time_Relative_sf",
+                      choices = colnames(dataImported),
+                      selected = "Time_Relative_sf")
+    updateSelectInput(session = session,
+                      inputId = "Observation",
+                      choices = colnames(dataImported),
+                      selected = "Observation")
+    updateSelectInput(session = session,
+                      inputId = "Subject",
+                      choices = colnames(dataImported),
+                      selected = "Subject")
+    updateSelectInput(session = session,
+                      inputId = "Behavior",
+                      choices = colnames(dataImported),
+                      selected = "Behavior")
   }
   
-  output$cond <- reactive({
-    req(input$fileToRead) # a file is required
-    fileExtension = tolower(substr(input$fileToRead$name, 
+  
+  
+  ### Check if the file is in csv format
+  output$isCsvFile <- reactive({
+    # A file is required
+    req(input$fileToRead)
+    
+    # Extract file extension (4 characters)
+    fileExtension = tolower(substr(input$fileToRead$name,
                                    nchar(input$fileToRead$name) - 3,
                                    nchar(input$fileToRead$name)))
-    (fileExtension == ".csv")
+    
+    # Check the extension
+    (fileExtension == ".csv") 
   })
-  outputOptions(output, "cond", suspendWhenHidden = FALSE)
   
-  #reading and viewing the file imported
+  # Keep the boolean value
+  outputOptions(output, "isCsvFile", suspendWhenHidden = FALSE) 
+
+  
+  
+  ### When a file is inputted
   observe(output$dataImportedView <- renderDataTable({
-    req(input$fileToRead) # a file is required
-    DF <<- get_data_table(input$fileToRead, input$header, input$sep, input$quote)
-    updateConfigCsv()
-    updateTextInput(session, input$folderPath, input$fileToRead$path)
-    datatable(data = DF)
-  }))
-  
-  #observe the import button
-  observeEvent(c(input$header, input$sep, input$quote), {
+    # A file is required
     req(input$fileToRead)
-    updateConfigCsv()
-  })
+   
+    # Creation of the data file
+    dataImported <<- get_data_table(inFile = input$fileToRead, 
+                                    header = input$header,
+                                    sep = input$sep, 
+                                    quote = input$quote)
+    
+    # Updating the columns names input for the future configuration
+    updateColNamesInput()
+    
+    # Update the view of the data file
+    datatable(data = dataImported)
+  }))
+
+
   
-  #when click on next step conversion button
+  ### When click on a config csv input
+  observeEvent(c(input$header, input$sep, input$quote), {
+    # A file is required
+    req(input$fileToRead)
+    
+    # Updating the columns names input for the future configuration
+    updateColNamesInput()
+  })
+
+
+  
+  ## When click on the build start stop table button
   observeEvent(input$buildStartStop, {
-    req(input$fileToRead) # a file is required
-    #df <- get_data_table(input$fileToRead, input$header, input$sep, input$quote)
+    # A file is required
+    req(input$fileToRead)
     
-    SS_TABLE <<- build_start_stop_table(DF,
-                                        input$Event_Type,
-                                        input$Time_Relative_sf,
-                                        input$Observation,
-                                        input$Subject,
-                                        input$Behavior
-    )
+    # Creation of the start/stop table
+    ssTable <<- build_start_stop_table(data = dataImported,
+                                        Event_Type = input$Event_Type,
+                                        Time_Relative_sf = input$Time_Relative_sf,
+                                        Observation = input$Observation,
+                                        Subject = input$Subject,
+                                        Behavior = input$Behavior)
     
-    #reading and viewing the file imported
+    # Update the view of the start/stop table
     output$startStopView <- renderDataTable({
-      datatable(data = SS_TABLE)
+      datatable(data = ssTable)
     })
     
-    #finding all var to create global vectors
-    OBSERVATIONS <<- get_all_observations_labels(SS_TABLE)
-    updateCheckboxGroupInput(session, "selected.observations", choices = OBSERVATIONS, selected = OBSERVATIONS)
+    # Finding all observations in the start/stop table
+    OBSERVATIONS <<- get_all_observations_labels(data = ssTable)
+    
+    # Update the observations input
+    updateCheckboxGroupInput(session = session,
+                             inputId = "selected.observations",
+                             choices = OBSERVATIONS,
+                             selected = OBSERVATIONS)
   })
+
   
+  
+  ### When click on an observation in the items list
   observeEvent(input$selected.observations, {
-    SUBJECTS <<- get_all_subjects_labels(SS_TABLE, input$selected.observations)
-    updateCheckboxGroupInput(session, "selected.subjects", choices = SUBJECTS, selected = SUBJECTS)
+    # Finding all subjects in the start/stop tablea ccording to the selected observations
+    SUBJECTS <<- get_all_subjects_labels(data = ssTable,
+                                         observation_column = input$selected.observations)
+    
+    # Update the subjects input
+    updateCheckboxGroupInput(session = session,
+                             inputId = "selected.subjects",
+                             choices = SUBJECTS,
+                             selected = SUBJECTS)
   })
+
   
+  
+  ### When click on a subject in the items list
   observeEvent(input$selected.subjects, {
-    BEHAVIORS <<- get_all_behaviors_labels(SS_TABLE, input$selected.observations, input$selected.subjects)
-    updateCheckboxGroupInput(session, "selected.behaviors", choices = BEHAVIORS, selected = BEHAVIORS)
+    # Finding all behaviors in the start/stop table according to the selected observations and subjects
+    BEHAVIORS <<- get_all_behaviors_labels(data = ssTable,
+                                           observation_column = input$selected.observations,
+                                           subject_column = input$selected.subjects)
+    
+    # Update the behaviors input
+    updateCheckboxGroupInput(session,
+                             "selected.behaviors",
+                             choices = BEHAVIORS,
+                             selected = BEHAVIORS)
   })
+
   
-  #when click on conversion button
-  # observeEvent(input$runOno, {
-  #   for(o in input$selected.observations){
-  #     for(s in input$selected.subjects){
-  #       possibleError <- tryCatch({
-  #         
-  #         result <- SS_TABLE %>%
-  #           filter(observation == o) %>%
-  #           filter(subject == s) %>%
-  #           filter(behavior %in% input$selected.behaviors)%>%
-  #           build_ono_data() %>%
-  #           write.csv(., paste0("ono-",
-  #                               o,
-  #                               s,
-  #                               ".csv"))
-  #       },
-  #       error=function(e) {
-  #         print(e)
-  #       },
-  #       warning=function(e){
-  #         print(e)
-  #       })
-  #       if(inherits(possibleError, "error")) next
-  #       if(inherits(possibleError, "warning")) next
-  #       }
-  #     }
-  # 
-  # })
-  
+  ### When click on the downloadOno button
   output$downloadOno <- downloadHandler(
-    filename = function(){
-      paste0("ono", Sys.time(),".zip")
+    # Name of the zip file exported
+    filename = function() {
+      # Format date and time of now
+      time <- format(Sys.time(), "%Y%m%d-%H%M%S")
+      # Naming the zip file
+      paste0("All-ono-", time, ".zip")
     },
-    content = function(con){
+    
+    # Content of the zip file exported
+    content = function(con) {
+      # Save csv files in the temp directory
       tmpdir <- tempdir()
       setwd(tempdir())
-      filestosave=c()
+      filestosave = c()
       
-      for(o in input$selected.observations){
-        for(s in input$selected.subjects){
+      # Browsing all observations and all subjects in the start/stop table
+      for (o in input$selected.observations) {
+        for (s in input$selected.subjects) {
+          
           possibleError <- tryCatch({
-
-            result <- SS_TABLE %>%
+            
+            # Building the ono table for the Observation 'o' and the Subject 's'
+            onoTable <- ssTable %>%
               filter(observation == o) %>%
               filter(subject == s) %>%
-              filter(behavior %in% input$selected.behaviors)%>%
+              filter(behavior %in% input$selected.behaviors) %>%
               build_ono_data()
             
-            write.csv(result, paste0("ono-",o,s,".csv"))
-            filestosave <- c(filestosave, paste0("ono-",o,s,".csv"))
+            # Creating the name of the ono table
+            onoName <- paste0("ono-", o, s, ".csv")
+            
+            # Writing the csv file
+            write.csv(onoTable, onoName)
+            
+            # Adding the path of the csv file to the zip
+            filestosave <- c(filestosave, onoName)
           },
-          error=function(e) {
+          error = function(e) {
             print(e)
           },
-          warning=function(e){
+          warning = function(e) {
             print(e)
           })
-          if(inherits(possibleError, "error")) next
-          if(inherits(possibleError, "warning")) next
-          }
+          if (inherits(possibleError, "error"))
+            next
+          if (inherits(possibleError, "warning"))
+            next
         }
-      
-      zip(zipfile=con, files=filestosave)
+      }
+      # Creating the zip file to download
+      zip(zipfile = con, files = filestosave)
     },
     contentType = "application/zip"
   )
-
 }
 
 shinyServer(server)
