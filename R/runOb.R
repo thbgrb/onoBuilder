@@ -4,10 +4,10 @@
 #'
 #' @examples
 #' if(interactive()) {
-#'   runToc()
+#'   runOb()
 #' }
-runToc <- function() {
-  appDir <- system.file("shinyapp", package = "theObsConverter")
+runOb <- function() {
+  appDir <- system.file("shinyapp", package = "onoBuilder")
   if(appDir == "") {
     stop("Could not find example directory. Try reinstalling `theObsConverter`.",
          call. = FALSE)

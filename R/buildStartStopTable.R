@@ -12,7 +12,7 @@
 #'
 #' @import dplyr
 #' @import tidyr
-build_start_stop_table <- function(data,
+buildStartStopTable <- function(data,
                                    Event_Type,
                                    Time_Relative_sf,
                                    Observation,

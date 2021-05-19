@@ -57,7 +57,7 @@ server <- function(input, output, session) {
     req(input$fileToRead)
    
     # Creation of the data file
-    dataImported <<- get_data_table(inFile = input$fileToRead, 
+    dataImported <<- importDataTable(inFile = input$fileToRead, 
                                     header = input$header,
                                     sep = input$sep, 
                                     quote = input$quote)
@@ -88,7 +88,7 @@ server <- function(input, output, session) {
     req(input$fileToRead)
     
     # Creation of the start/stop table
-    ssTable <<- build_start_stop_table(data = dataImported,
+    ssTable <<- buildStartStopTable(data = dataImported,
                                         Event_Type = input$Event_Type,
                                         Time_Relative_sf = input$Time_Relative_sf,
                                         Observation = input$Observation,
@@ -101,7 +101,7 @@ server <- function(input, output, session) {
     })
     
     # Finding all observations in the start/stop table
-    OBSERVATIONS <<- get_all_observations_labels(data = ssTable)
+    OBSERVATIONS <<- getObservationsLabels(data = ssTable)
     
     # Update the observations input
     updateCheckboxGroupInput(session = session,
@@ -115,7 +115,7 @@ server <- function(input, output, session) {
   ### When click on an observation in the items list
   observeEvent(input$selected.observations, {
     # Finding all subjects in the start/stop tablea ccording to the selected observations
-    SUBJECTS <<- get_all_subjects_labels(data = ssTable,
+    SUBJECTS <<- getSubjectsLabels(data = ssTable,
                                          observation_column = input$selected.observations)
     
     # Update the subjects input
@@ -130,7 +130,7 @@ server <- function(input, output, session) {
   ### When click on a subject in the items list
   observeEvent(input$selected.subjects, {
     # Finding all behaviors in the start/stop table according to the selected observations and subjects
-    BEHAVIORS <<- get_all_behaviors_labels(data = ssTable,
+    BEHAVIORS <<- getBehaviorsLabels(data = ssTable,
                                            observation_column = input$selected.observations,
                                            subject_column = input$selected.subjects)
     
@@ -170,7 +170,7 @@ server <- function(input, output, session) {
               filter(observation == o) %>%
               filter(subject == s) %>%
               filter(behavior %in% input$selected.behaviors) %>%
-              build_ono_data()
+              buildOnoTable()
             
             # Creating the name of the ono table
             onoName <- paste0("ono-", o, s, ".csv")

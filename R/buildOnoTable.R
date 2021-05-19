@@ -4,7 +4,7 @@
 #' #'
 #' @return returns a \code{data.frame} of occurences - non occurences.
 #' @export
-build_ono_data <- function(df){
+buildOnoTable <- function(df){
   
   # Building the table that will contain the user-specified behaviors, occurrences and 
   # non-occurrences of the behaviors. The timeline is also considered.

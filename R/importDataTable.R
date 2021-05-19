@@ -10,7 +10,7 @@
 #' @importFrom utils read.csv
 #' @importFrom readxl read_excel
 #' 
-get_data_table <- function(inFile, header, sep, quote){
+importDataTable <- function(inFile, header, sep, quote){
   
   #check if the file exist
   if (is.null(inFile))

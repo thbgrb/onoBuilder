@@ -4,7 +4,7 @@
 #'
 #' @return a vector which contain all the observations observed 
 #' @export
-get_all_observations_labels <- function(data){
+getObservationsLabels <- function(data){
   
   observations <- c()
   

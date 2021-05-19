@@ -6,7 +6,7 @@
 #'
 #' @return a vector which contain all the behaviors observed 
 #' @export
-get_all_behaviors_labels <- function(data, observation_column, subject_column){
+getBehaviorsLabels <- function(data, observation_column, subject_column){
   
   data <- data %>%
     filter(data$observation %in% observation_column) %>%

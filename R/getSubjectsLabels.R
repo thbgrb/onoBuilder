@@ -5,7 +5,7 @@
 #'
 #' @return a vector which contain all the subjects observed 
 #' @export
-get_all_subjects_labels <- function(data, observation_column){
+getSubjectsLabels <- function(data, observation_column){
  
    data <- data %>%
     filter(data$observation %in% observation_column)
