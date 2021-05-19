@@ -4,6 +4,9 @@ library(tidyr)
 ### Define the shiny app server
 server <- function(input, output, session) {
   
+  
+    
+  
   options(DT.options = list(pageLength = 5))
   
   ### Function which update columns names inputs
@@ -49,6 +52,10 @@ server <- function(input, output, session) {
   # Keep the boolean value
   outputOptions(output, "isCsvFile", suspendWhenHidden = FALSE) 
 
+  output$isFileUploaded <- reactive({
+    req(input$fileToRead)
+  })
+  outputOptions(output, "isFileUploaded", suspendWhenHidden = FALSE) 
   
   
   ### When a file is inputted
@@ -158,7 +165,7 @@ server <- function(input, output, session) {
       tmpdir <- tempdir()
       setwd(tempdir())
       filestosave = c()
-      
+      i<-0
       # Browsing all observations and all subjects in the start/stop table
       for (o in input$selected.observations) {
         for (s in input$selected.subjects) {
@@ -180,6 +187,8 @@ server <- function(input, output, session) {
             
             # Adding the path of the csv file to the zip
             filestosave <- c(filestosave, onoName)
+            
+            i <- i + 1 
           },
           error = function(e) {
             print(e)
@@ -195,6 +204,13 @@ server <- function(input, output, session) {
       }
       # Creating the zip file to download
       zip(zipfile = con, files = filestosave)
+      
+      output$progressBox <- renderValueBox({
+        valueBox(i, "file(s) saved.", 
+                 icon = icon("thumbs-up", lib="glyphicon"),
+                 color = "yellow"
+                 )
+        })
     },
     contentType = "application/zip"
   )
