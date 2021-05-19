@@ -75,7 +75,8 @@ ui <- dashboardPage(
           checkboxGroupInput("selected.observations", "Observations:", c()),
           checkboxGroupInput("selected.subjects", "Subjects:", c()),
           checkboxGroupInput("selected.behaviors", "Behaviors:", c()),
-          actionButton("runOno", label = "Convert")
+          # actionButton("runOno", label = "Convert"),
+          downloadButton("downloadZip", "Donwload!")
         )
       )
     ),

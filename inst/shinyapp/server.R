@@ -33,6 +33,7 @@ server <- function(input, output, session){
     req(input$fileToRead) # a file is required
     DF <<- get_data_table(input$fileToRead, input$header, input$sep, input$quote)
     updateConfigCsv()
+    updateTextInput(session, input$folderPath, input$fileToRead$path)
     datatable(data = DF)
   }))
   
@@ -76,35 +77,80 @@ server <- function(input, output, session){
   })
   
   #when click on conversion button
-  observeEvent(input$runOno, {
+  # observeEvent(input$runOno, {
+  #   for(o in input$selected.observations){
+  #     for(s in input$selected.subjects){
+  #       possibleError <- tryCatch({
+  #         
+  #         result <- SS_TABLE %>%
+  #           filter(observation == o) %>%
+  #           filter(subject == s) %>%
+  #           filter(behavior %in% input$selected.behaviors)%>%
+  #           build_ono_data() %>%
+  #           write.csv(., paste0("ono-",
+  #                               o,
+  #                               s,
+  #                               ".csv"))
+  #       },
+  #       error=function(e) {
+  #         print(e)
+  #       },
+  #       warning=function(e){
+  #         print(e)
+  #       })
+  #       if(inherits(possibleError, "error")) next
+  #       if(inherits(possibleError, "warning")) next
+  #       }
+  #     }
+  # 
+  # })
+  
+  output$downloadZip <- downloadHandler(
+    filename = function(){
+      paste("ono", Sys.time(),".zip")
+    },
+    content = function(con){
+      tmpdir <- tempdir()
+      setwd(tempdir())
+      filestosave=c()
+      
+      for(o in input$selected.observations){
+        for(s in input$selected.subjects){
+          possibleError <- tryCatch({
 
-    for(o in input$selected.observations){
-      for(s in input$selected.subjects){
-        possibleError <- tryCatch({
-          
-          result <- SS_TABLE %>%
-            filter(observation == o) %>%
-            filter(subject == s) %>%
-            filter(behavior %in% input$selected.behaviors)%>%
-            build_ono_data() %>%
-            write.csv(., paste0("ono-",
-                                o,
-                                s,
-                                ".csv"))
-        },
-        error=function(e) {
-          print(e)
-        },
-        warning=function(e){
-          print(e)
-        })
-        if(inherits(possibleError, "error")) next
-        if(inherits(possibleError, "warning")) next
+            result <- SS_TABLE %>%
+              filter(observation == o) %>%
+              filter(subject == s) %>%
+              filter(behavior %in% input$selected.behaviors)%>%
+              build_ono_data()
+            
+
+        
+              write.csv(result, paste0("ono-",
+                                  o,
+                                  s,
+                                  ".csv"))
+              filestosave <- c(filestosave, paste0("ono-",
+                                                   o,
+                                                   s,
+                                                   ".csv"))
+          },
+          error=function(e) {
+            print(e)
+          },
+          warning=function(e){
+            print(e)
+          })
+          if(inherits(possibleError, "error")) next
+          if(inherits(possibleError, "warning")) next
+          }
         }
-      }
-    
-    
-  })
+      
+      zip(zipfile=con, files=filestosave)
+    },
+    contentType = "application/zip"
+  )
+
 }
 
 shinyServer(server)
