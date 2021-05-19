@@ -4,6 +4,8 @@ library(tidyr)
 ### Define the shiny app server
 server <- function(input, output, session) {
   
+  options(DT.options = list(pageLength = 5))
+  
   ### Function which update columns names inputs
   updateColNamesInput <- function() {
     updateSelectInput(session = session,
