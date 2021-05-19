@@ -205,12 +205,22 @@ server <- function(input, output, session) {
       # Creating the zip file to download
       zip(zipfile = con, files = filestosave)
       
-      output$progressBox <- renderValueBox({
-        valueBox(i, "file(s) saved.", 
-                 icon = icon("thumbs-up", lib="glyphicon"),
-                 color = "yellow"
-                 )
-        })
+      shinyalert(
+        title = paste0(i, " file(s) saved"),
+        size = "s", 
+        closeOnEsc = TRUE,
+        closeOnClickOutside = TRUE,
+        html = FALSE,
+        type = "success",
+        showConfirmButton = TRUE,
+        showCancelButton = FALSE,
+        confirmButtonText = "OK",
+        confirmButtonCol = "#00A659",
+        timer = 0,
+        imageUrl = "",
+        animation = TRUE
+      )
+      
     },
     contentType = "application/zip"
   )
