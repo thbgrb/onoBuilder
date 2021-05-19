@@ -8,7 +8,7 @@ ui <- dashboardPage(
   skin = "yellow",
   
   # Header of the ui
-  dashboardHeader(title = "The Observer Converter",
+  dashboardHeader(title = tagList(icon("sunglasses", lib="glyphicon"), "onoBuilder"),
                   titleWidth = 300),
   
   # Sidebar of the ui (hidden)
@@ -21,7 +21,7 @@ ui <- dashboardPage(
     conditionalPanel(condition = "input.buildStartStop",
                      fluidRow(
                        box(
-                         title = "Choose your items to build your ono files",
+                         title = tagList(icon("screenshot", lib="glyphicon"), "Choose items to build your ono tables"),
                          width=12,
                          status = "warning",
                          solidHeader = TRUE,
@@ -43,7 +43,7 @@ ui <- dashboardPage(
         # Widget for import a file
         box(
           width = NULL,
-          title = "Import your data",
+          title = tagList(icon("circle-arrow-up", lib="glyphicon"), "Import your data"),
           status = "primary",
           solidHeader = TRUE,
           
@@ -94,7 +94,7 @@ ui <- dashboardPage(
         # Widget of start/stop table builder
         box(
           width = NULL,
-          title = "Build the start/stop table",
+          title = tagList(icon("ok", lib="glyphicon"), "Check column names"),
           solidHeader = TRUE,
           status = "success",
           selectInput("Event_Type", label = "Event Type:", choices = NULL),
@@ -113,7 +113,7 @@ ui <- dashboardPage(
         ## Widget for the view of the imported file
         box(
           width = NULL,
-          title = "Your data imported",
+          title = tagList(icon("eye-open", lib="glyphicon"), "This is your file imported"),
           solidHeader = TRUE,
           status = "primary",
           div(style = 'overflow-x: scroll', dataTableOutput('dataImportedView'))
@@ -124,7 +124,7 @@ ui <- dashboardPage(
           width = NULL,
           status = "success",
           solidHeader = TRUE,
-          title = "The Start/Stop table",
+          title = tagList(icon("eye-open", lib="glyphicon"), "The Start/Stop table created"),
           div(style = 'overflow-x: scroll', dataTableOutput('startStopView'))
         )
       ),
