@@ -105,9 +105,9 @@ server <- function(input, output, session){
   # 
   # })
   
-  output$downloadZip <- downloadHandler(
+  output$downloadOno <- downloadHandler(
     filename = function(){
-      paste("ono", Sys.time(),".zip")
+      paste0("ono", Sys.time(),".zip")
     },
     content = function(con){
       tmpdir <- tempdir()
@@ -124,16 +124,8 @@ server <- function(input, output, session){
               filter(behavior %in% input$selected.behaviors)%>%
               build_ono_data()
             
-
-        
-              write.csv(result, paste0("ono-",
-                                  o,
-                                  s,
-                                  ".csv"))
-              filestosave <- c(filestosave, paste0("ono-",
-                                                   o,
-                                                   s,
-                                                   ".csv"))
+            write.csv(result, paste0("ono-",o,s,".csv"))
+            filestosave <- c(filestosave, paste0("ono-",o,s,".csv"))
           },
           error=function(e) {
             print(e)
