@@ -91,6 +91,42 @@ ui <- dashboardPage(
         )
       )),
     fluidRow(
+      # Widget of start/stop table builder
+      conditionalPanel(
+        condition = "output.isFileUploaded",
+        box(
+          width = 3,
+          title = tagList(icon("ok", lib = "glyphicon"), "Check column names"),
+          solidHeader = TRUE,
+          status = "success",
+          selectInput("Event_Type", label = "Event Type:", choices = NULL),
+          selectInput("Time_Relative_sf", label = "Time Relative:", choices = NULL),
+          hr(),
+          selectInput("Observation", label = "Observation:", choices = NULL),
+          selectInput("Subject", label = "Subject:", choices = NULL),
+          selectInput("Behavior", label = "Behavior:", choices = NULL),
+          actionButton(
+            inputId = "buildStartStop",
+            label = tagList("Next step", icon("chevron-right", lib =
+                                                "glyphicon")),
+            style = "float : right;
+                                font-weight : bold"
+          ),
+        )
+      ),
+      
+      ## Widget for the view of the imported file
+      conditionalPanel(
+        condition = "output.isFileUploaded",
+        box(
+          width = 6,
+          title = tagList(icon("eye-open", lib = "glyphicon"), "This is your file imported"),
+          solidHeader = TRUE,
+          status = "primary",
+          div(style = 'overflow-x: scroll', dataTableOutput('dataImportedView'))
+        )
+      ) ,
+      
       # Widget for import a file
       box(
         width = 3,
@@ -137,42 +173,6 @@ ui <- dashboardPage(
               "Single Quote" = "'"
             ),
             selected = '"'
-          ),
-        )
-      ),
-      
-      ## Widget for the view of the imported file
-      conditionalPanel(
-        condition = "output.isFileUploaded",
-        box(
-          width = 6,
-          title = tagList(icon("eye-open", lib = "glyphicon"), "This is your file imported"),
-          solidHeader = TRUE,
-          status = "primary",
-          div(style = 'overflow-x: scroll', dataTableOutput('dataImportedView'))
-        )
-      ) ,
-      
-      # Widget of start/stop table builder
-      conditionalPanel(
-        condition = "output.isFileUploaded",
-        box(
-          width = 3,
-          title = tagList(icon("ok", lib = "glyphicon"), "Check column names"),
-          solidHeader = TRUE,
-          status = "success",
-          selectInput("Event_Type", label = "Event Type:", choices = NULL),
-          selectInput("Time_Relative_sf", label = "Time Relative:", choices = NULL),
-          hr(),
-          selectInput("Observation", label = "Observation:", choices = NULL),
-          selectInput("Subject", label = "Subject:", choices = NULL),
-          selectInput("Behavior", label = "Behavior:", choices = NULL),
-          actionButton(
-            inputId = "buildStartStop",
-            label = tagList("Next step", icon("chevron-right", lib =
-                                                "glyphicon")),
-            style = "float : right;
-                                font-weight : bold"
           ),
         )
       )
