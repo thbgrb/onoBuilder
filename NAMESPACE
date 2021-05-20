@@ -2,9 +2,6 @@
 
 export(buildOnoTable)
 export(buildStartStopTable)
-export(getBehaviorsLabels)
-export(getObservationsLabels)
-export(getSubjectsLabels)
 export(importDataTable)
 export(runOb)
 import(dplyr)

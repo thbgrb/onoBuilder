@@ -3,9 +3,25 @@ library(tidyr)
 
 ### Define the shiny app server
 server <- function(input, output, session) {
-  
-  
-    
+ 
+  showErrorPopup <- function(text){
+    shinyalert(
+      title = "Sorry, something went wrong ... ",
+      text = text,
+      size = "s", 
+      closeOnEsc = TRUE,
+      closeOnClickOutside = TRUE,
+      html = FALSE,
+      type = "error",
+      showConfirmButton = TRUE,
+      showCancelButton = FALSE,
+      confirmButtonText = "OK",
+      confirmButtonCol = "#F27474",
+      timer = 0,
+      imageUrl = "",
+      animation = TRUE
+    ) 
+  }
   
   options(DT.options = list(pageLength = 5))
   
@@ -94,59 +110,51 @@ server <- function(input, output, session) {
     # A file is required
     req(input$fileToRead)
     
-    # Creation of the start/stop table
-    ssTable <<- buildStartStopTable(data = dataImported,
-                                        Event_Type = input$Event_Type,
-                                        Time_Relative_sf = input$Time_Relative_sf,
-                                        Observation = input$Observation,
-                                        Subject = input$Subject,
-                                        Behavior = input$Behavior)
-    
-    # Update the view of the start/stop table
-    output$startStopView <- renderDataTable({
-      datatable(data = ssTable)
+    tryCatch({
+      # Creation of the start/stop table
+      ssTable <- buildStartStopTable(data = dataImported,
+                                          Event_Type = input$Event_Type,
+                                          Time_Relative_sf = input$Time_Relative_sf,
+                                          Observation = input$Observation,
+                                          Subject = input$Subject,
+                                          Behavior = input$Behavior)
+      
+      # Update the view of the start/stop table
+      output$ssTable <- renderDataTable({
+        datatable(data = ssTable)
+      })
+      
+      # Finding all observations in the start/stop table
+      observations <- sort(unique(ssTable$observation))
+      
+      # Update the observations input
+      updateCheckboxGroupInput(session = session,
+                               inputId = "selected.observations",
+                               choices = observations,
+                               selected = observations)
+      
+      # Finding all subjects in the start/stop tablea ccording to the selected observations
+      subjects <- sort(unique(ssTable$subject))
+      
+      # Update the subjects input
+      updateCheckboxGroupInput(session = session,
+                               inputId = "selected.subjects",
+                               choices = subjects,
+                               selected = subjects)
+      
+      # Finding all behaviors in the start/stop table according to the selected observations and subjects
+      behaviors <- sort(unique(ssTable$behavior))
+      
+      # Update the behaviors input
+      updateCheckboxGroupInput(session,
+                               "selected.behaviors",
+                               choices = behaviors,
+                               selected = behaviors)
+    },error = function(e){
+      showErrorPopup("Your column names are probably incorrect.")
     })
-    
-    # Finding all observations in the start/stop table
-    OBSERVATIONS <<- getObservationsLabels(data = ssTable)
-    
-    # Update the observations input
-    updateCheckboxGroupInput(session = session,
-                             inputId = "selected.observations",
-                             choices = OBSERVATIONS,
-                             selected = OBSERVATIONS)
   })
-
   
-  
-  ### When click on an observation in the items list
-  observeEvent(input$selected.observations, {
-    # Finding all subjects in the start/stop tablea ccording to the selected observations
-    SUBJECTS <<- getSubjectsLabels(data = ssTable,
-                                         observation_column = input$selected.observations)
-    
-    # Update the subjects input
-    updateCheckboxGroupInput(session = session,
-                             inputId = "selected.subjects",
-                             choices = SUBJECTS,
-                             selected = SUBJECTS)
-  })
-
-  
-  
-  ### When click on a subject in the items list
-  observeEvent(input$selected.subjects, {
-    # Finding all behaviors in the start/stop table according to the selected observations and subjects
-    BEHAVIORS <<- getBehaviorsLabels(data = ssTable,
-                                           observation_column = input$selected.observations,
-                                           subject_column = input$selected.subjects)
-    
-    # Update the behaviors input
-    updateCheckboxGroupInput(session,
-                             "selected.behaviors",
-                             choices = BEHAVIORS,
-                             selected = BEHAVIORS)
-  })
 
   
   ### When click on the downloadOno button
@@ -161,11 +169,25 @@ server <- function(input, output, session) {
     
     # Content of the zip file exported
     content = function(con) {
+      
       # Save csv files in the temp directory
       tmpdir <- tempdir()
       setwd(tempdir())
       filestosave = c()
+      
       i<-0
+      
+      # A file is required
+      req(input$fileToRead)
+      
+      # Creation of the start/stop table
+      ssTable <- buildStartStopTable(data = dataImported,
+                                     Event_Type = input$Event_Type,
+                                     Time_Relative_sf = input$Time_Relative_sf,
+                                     Observation = input$Observation,
+                                     Subject = input$Subject,
+                                     Behavior = input$Behavior)
+      
       # Browsing all observations and all subjects in the start/stop table
       for (o in input$selected.observations) {
         for (s in input$selected.subjects) {
@@ -202,24 +224,28 @@ server <- function(input, output, session) {
             next
         }
       }
-      # Creating the zip file to download
-      zip(zipfile = con, files = filestosave)
-      
-      shinyalert(
-        title = paste0(i, " file(s) saved"),
-        size = "s", 
-        closeOnEsc = TRUE,
-        closeOnClickOutside = TRUE,
-        html = FALSE,
-        type = "success",
-        showConfirmButton = TRUE,
-        showCancelButton = FALSE,
-        confirmButtonText = "OK",
-        confirmButtonCol = "#00A659",
-        timer = 0,
-        imageUrl = "",
-        animation = TRUE
-      )
+      tryCatch({
+        # Creating the zip file to download
+        zip(zipfile = con, files = filestosave)
+        
+        shinyalert(
+          title = paste0(i, " file(s) saved"),
+          size = "s", 
+          closeOnEsc = TRUE,
+          closeOnClickOutside = TRUE,
+          html = FALSE,
+          type = "success",
+          showConfirmButton = TRUE,
+          showCancelButton = FALSE,
+          confirmButtonText = "OK",
+          confirmButtonCol = "#00A659",
+          timer = 0,
+          imageUrl = "",
+          animation = TRUE
+        )
+      },error = function(e) {
+        showErrorPopup("Check filters and try again.")
+      })
       
     },
     contentType = "application/zip"
