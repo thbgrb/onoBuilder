@@ -20,124 +20,68 @@ ui <- dashboardPage(
   # Content of the page
   dashboardBody(
     useShinyalert(),
-    
-    # Widget for building ono files
-    conditionalPanel(condition = "input.buildStartStop",
-                     fluidRow(
-                        column(
-                          width = 9,
-                         box(
-                           width = NULL,
-                           title = tagList(
-                             icon("screenshot", lib = "glyphicon"),
-                             "Filter your items before building your ono tables"
-                           ),
-                           status = "warning",
-                           solidHeader = FALSE,
-                           box(
-                             title = tagList(icon("sunglasses", lib = "glyphicon"), "Observations:"),
-                             solidHeader = TRUE,
-                             width = 4,
-                             status = "warning",
-                             collapsible = TRUE,
-                             collapsed = TRUE,
-                             checkboxGroupInput("selected.observations", "", c())
-                           ),
-                           box(
-                             title = tagList(icon("sunglasses", lib = "glyphicon"), "Subjects:"),
-                             solidHeader = TRUE,
-                             width = 4,
-                             status = "warning",
-                             collapsible = TRUE,
-                             collapsed = TRUE,
-                             checkboxGroupInput("selected.subjects", "", c())
-                           ),
-                           box(
-                             title = tagList(icon("sunglasses", lib = "glyphicon"), "Behaviors:"),
-                             solidHeader = TRUE,
-                             width = 4,
-                             status = "warning",
-                             collapsible = TRUE,
-                             collapsed = TRUE,
-                             checkboxGroupInput("selected.behaviors", "", c())
-                           )
-                          )),
-                       column(
-                         width = 3,
-                         box(
-                           width=NULL,
-                         title = tagList(icon("refresh", lib = "glyphicon"), "Convert & Download"),
-                         solidHeader = TRUE,
-                         
-                         status = "warning",
-                         div(downloadButton("downloadOno", "Save"))
-                       )
-                     ))
-    )
-,
+  
     fluidRow(
-      ## Widget for the view of the start/stop table
-      conditionalPanel(
-        condition = "input.buildStartStop",
-        box(
-          width = 12,
-          status = "success",
-          solidHeader = TRUE,
-          title = tagList(
-            icon("eye-open", lib = "glyphicon"),
-            "The Start/Stop table created"
-          ),
-          div(style = 'overflow-x: scroll', dataTableOutput('ssTable'))
-        )
-      )),
-    fluidRow(
-      # Widget for import a file
-      box(
+      box( width=12,
+           solidHeader = TRUE,
+           collapsible = TRUE,
+           status = "primary",
+           title = tagList(
+             icon("arrow-up", lib = "glyphicon"),
+             "STEP 1: Import your data"
+           ),
+      column(
         width = 3,
-        title = tagList(icon("circle-arrow-up", lib = "glyphicon"), "Import your data"),
-        status = "primary",
-        solidHeader = TRUE,
-        
-        # Choose the file to import
-        fileInput(
-          "fileToRead",
-          "Select your file",
-          multiple = FALSE,
-          accept = c(".csv", ".xlsx", "xls")
+        # Widget for import a file
+        box(
+          width = NULL,
+          solidHeader = TRUE,
+          status = "primary",
+          
+          # Choose the file to import
+          fileInput(
+            "fileToRead",
+            "Choose a CSV or an EXCEL file:",
+            multiple = FALSE,
+            accept = c(".csv", ".xlsx", "xls")
+          ),
         ),
         
         # Inputs for config csv import showed only for csv files
         conditionalPanel(
           condition = "output.isCsvFile",
-          
-          hr(),
-          
-          # Choose if the file imported has a header
-          checkboxInput("header", "Header", TRUE),
-          
-          # Choose the separator in the file imported
-          radioButtons(
-            inputId = "sep",
-            label = "Separator",
-            choices = c(
-              Comma = ",",
-              Semicolon = ";",
-              Tab = "\t"
+          box(
+            width = NULL,
+            status = "primary",
+            solidHeader = TRUE,
+            # Choose if the file imported has a header
+            checkboxInput("header", "Header", TRUE),
+            
+            # Choose the separator in the file imported
+            radioButtons(
+              inputId = "sep",
+              label = "Separator",
+              choices = c(
+                Comma = ",",
+                Semicolon = ";",
+                Tab = "\t"
+              ),
+              selected = ","
             ),
-            selected = ","
-          ),
-          
-          # Choose the quote in the file imported
-          radioButtons(
-            "quote",
-            "Quote",
-            choices = c(
-              None = "",
-              "Double Quote" = '"',
-              "Single Quote" = "'"
+            
+            
+            # Choose the quote in the file imported
+            radioButtons(
+              "quote",
+              "Quote",
+              choices = c(
+                None = "",
+                "Double Quote" = '"',
+                "Single Quote" = "'"
+              ),
+              selected = '"'
             ),
-            selected = '"'
-          ),
+          )
         )
       ),
       
@@ -145,25 +89,27 @@ ui <- dashboardPage(
       conditionalPanel(
         condition = "output.isFileUploaded",
         box(
-          width = 6,
-          title = tagList(icon("eye-open", lib = "glyphicon"), "This is your file imported"),
-          solidHeader = TRUE,
+          width = 9,
           status = "primary",
+          solidHeader = TRUE,
           div(style = 'overflow-x: scroll', dataTableOutput('dataImportedView'))
         )
       ) ,
-      
+    )),
+    fluidRow(conditionalPanel(
+      condition = "output.isFileUploaded",box(
+      width = 12,
+      title = tagList(icon("ok", lib = "glyphicon"), "STEP 2: Check column names to create the start/stop table"),
+      solidHeader = TRUE,
+      collapsible = TRUE,
+      status = "success",
       # Widget of start/stop table builder
-      conditionalPanel(
-        condition = "output.isFileUploaded",
         box(
           width = 3,
-          title = tagList(icon("ok", lib = "glyphicon"), "Check column names"),
           solidHeader = TRUE,
           status = "success",
           selectInput("Event_Type", label = "Event Type:", choices = NULL),
           selectInput("Time_Relative_sf", label = "Time Relative:", choices = NULL),
-          hr(),
           selectInput("Observation", label = "Observation:", choices = NULL),
           selectInput("Subject", label = "Subject:", choices = NULL),
           selectInput("Behavior", label = "Behavior:", choices = NULL),
@@ -174,8 +120,78 @@ ui <- dashboardPage(
             style = "float : right;
                                 font-weight : bold"
           ),
+        ),
+      
+      
+      ## Widget for the view of the start/stop table
+      conditionalPanel(
+        condition = "input.buildStartStop",
+        box(
+          width = 9,
+          status = "success",
+          solidHeader = TRUE,
+          div(style = 'overflow-x: scroll', dataTableOutput('ssTable'))
+        )
+      ),
+      ),
+    )),
+    fluidRow(
+      # Widget for building ono files
+      conditionalPanel(
+        condition = "input.buildStartStop",
+        box(
+          collapsible = TRUE,
+          width=12,
+          title = tagList(
+            icon("arrow-down", lib = "glyphicon"),
+            "STEP 3: Filter your items and get your ono tables"
+          ),
+          status = "warning",
+          solidHeader = TRUE,
+
+          box(
+            title = tagList(icon("sunglasses", lib = "glyphicon"), "Observations:"),
+            solidHeader = TRUE,
+            width = 3,
+            status = "warning",
+            collapsible = TRUE,
+            collapsed = TRUE,
+            checkboxGroupInput("selected.observations", "", c())
+          ),
+          box(
+            title = tagList(icon("sunglasses", lib = "glyphicon"), "Subjects:"),
+            solidHeader = TRUE,
+            width = 3,
+            status = "warning",
+            collapsible = TRUE,
+            collapsed = TRUE,
+            checkboxGroupInput("selected.subjects", "", c())
+          ),
+          box(
+            title = tagList(icon("sunglasses", lib = "glyphicon"), "Behaviors:"),
+            solidHeader = TRUE,
+            width = 3,
+            status = "warning",
+            collapsible = TRUE,
+            collapsed = TRUE,
+            checkboxGroupInput("selected.behaviors", "", c())
+          ),
+        
+        
+        box(
+          width = 3,
+          solidHeader = TRUE,
+          status = "warning",
+          div(downloadButton("downloadOno", "Download your ono tables", style="font-weight:bold"))
         )
       )
+        
+      )
+      
+      
+      
+      
+      
       
     )
   ),
