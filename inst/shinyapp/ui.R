@@ -165,39 +165,41 @@ ui <- dashboardPage(
           solidHeader = TRUE,
           
           box(
-            title = tagList(icon("sunglasses", lib = "glyphicon"), "Observations:"),
             solidHeader = TRUE,
             width = 3,
             status = "warning",
-            collapsible = TRUE,
-            collapsed = TRUE,
-            checkboxGroupInput("selected.observations", "", c())
+            checkboxGroupInput(inputId = "selected.observations", 
+                               label = "Observations:", 
+                               choices = c())
           ),
           box(
-            title = tagList(icon("sunglasses", lib = "glyphicon"), "Subjects:"),
             solidHeader = TRUE,
             width = 3,
             status = "warning",
-            collapsible = TRUE,
-            collapsed = TRUE,
-            checkboxGroupInput("selected.subjects", "", c())
+            checkboxGroupInput(inputId = "selected.subjects", 
+                               label = "Subjects:", 
+                               choices = c())
           ),
           box(
-            title = tagList(icon("sunglasses", lib = "glyphicon"), "Behaviors:"),
             solidHeader = TRUE,
             width = 3,
             status = "warning",
-            collapsible = TRUE,
-            collapsed = TRUE,
-            checkboxGroupInput("selected.behaviors", "", c())
+            checkboxGroupInput(inputId = "selected.behaviors", 
+                               label = "Behaviors:", 
+                              choices = c())
           ),
           box(
             width = 3,
             solidHeader = TRUE,
             status = "warning",
-            div(
-              downloadButton("downloadOno", "Download your ono tables", style = "font-weight:bold")
-            )
+            background = "yellow",
+            h5("Make sure you have selected all the filters your want, and click 
+              on the button below to save the ono files on your computer"),
+            hr(),
+            downloadButton(outputId = "downloadOno",
+                           icon = NULL,
+                           label = tagList("Save your files", " ", icon("ok", lib="glyphicon")), 
+                           style = "font-weight:bold; float:right")
           )
         )
         

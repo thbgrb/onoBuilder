@@ -191,7 +191,7 @@ server <- function(input, output, session) {
         for (o in input$selected.observations) {
           for (s in input$selected.subjects) {
             # Catch error on creation of ono files
-            tryCatch({
+            possibleError <- tryCatch({
               
               # Building the ono table for the Observation 'o' and the Subject 's'
               onoTable <- ssTable %>%
