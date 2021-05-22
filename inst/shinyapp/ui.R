@@ -136,7 +136,7 @@ ui <- dashboardPage(
         
         # Widget for the view of the start/stop table
         conditionalPanel(
-          condition = "input.buildStartStop",
+          condition = "output.isSsTableCreated",
           box(
             width = 9,
             status = "success",
@@ -150,7 +150,7 @@ ui <- dashboardPage(
     # Third line of boxes
     fluidRow(
       conditionalPanel(
-        condition = "input.buildStartStop",
+        condition = "output.isSsTableCreated",
         box(
           collapsible = TRUE,
           width = 12,

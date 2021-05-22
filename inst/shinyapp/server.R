@@ -3,25 +3,6 @@ library(tidyr)
 
 ### Define the shiny app server
 server <- function(input, output, session) {
- 
-  showErrorPopup <- function(text){
-    shinyalert(
-      title = "Sorry, something went wrong ... ",
-      text = text,
-      size = "s", 
-      closeOnEsc = TRUE,
-      closeOnClickOutside = TRUE,
-      html = FALSE,
-      type = "error",
-      showConfirmButton = TRUE,
-      showCancelButton = FALSE,
-      confirmButtonText = "OK",
-      confirmButtonCol = "#F27474",
-      timer = 0,
-      imageUrl = "",
-      animation = TRUE
-    ) 
-  }
   
   options(DT.options = list(pageLength = 5))
   
@@ -64,13 +45,13 @@ server <- function(input, output, session) {
     # Check the extension
     (fileExtension == ".csv") 
   })
-  
-  # Keep the boolean value
+  # Keep the value to know if the file is a csv file
   outputOptions(output, "isCsvFile", suspendWhenHidden = FALSE) 
 
   output$isFileUploaded <- reactive({
     req(input$fileToRead)
   })
+  # Keep the value to know if the file is uploaded
   outputOptions(output, "isFileUploaded", suspendWhenHidden = FALSE) 
   
   
@@ -103,10 +84,12 @@ server <- function(input, output, session) {
     updateColNamesInput()
   })
 
-
+  # False if the ssTable is not created
+  output$isSsTableCreated <- reactive({FALSE})
   
   ## When click on the build start stop table button
   observeEvent(input$buildStartStop, {
+    
     # A file is required
     req(input$fileToRead)
     
@@ -150,106 +133,120 @@ server <- function(input, output, session) {
                                "selected.behaviors",
                                choices = behaviors,
                                selected = behaviors)
+      
+      # TRUE because the start/stop is fully created
+      output$isSsTableCreated <<- reactive({TRUE})
     },error = function(e){
-      showErrorPopup("Your column names are probably incorrect.")
+      # FALSE because there is an error
+      output$isSsTableCreated <- reactive({FALSE})
+      
+      # Show an error pop-up
+      shinyalert(
+        title = "Sorry, something went wrong ... ",
+        text = "Your column names are probably incorrect.",
+        type = "error",
+        confirmButtonCol = "#F27474",
+        animation = TRUE
+      ) 
     })
   })
   
-
-  
-  ### When click on the downloadOno button
-  output$downloadOno <- downloadHandler(
-    # Name of the zip file exported
-    filename = function() {
-      # Format date and time of now
-      time <- format(Sys.time(), "%Y%m%d-%H%M%S")
-      # Naming the zip file
-      paste0("All-ono-", time, ".zip")
-    },
+  # Keep the value to know if the start/stop table is created
+  outputOptions(output, "isSsTableCreated", suspendWhenHidden = FALSE) 
     
-    # Content of the zip file exported
-    content = function(con) {
+    ### When click on the downloadOno button
+    output$downloadOno <- downloadHandler(
+      # Name of the zip file exported
+      filename = function() {
+        # Format date and time of now
+        time <- format(Sys.time(), "%Y%m%d-%H%M%S")
+        # Naming the zip file
+        paste0("All-ono-", time, ".zip")
+      },
+    
+      # Content of the zip file exported
+      content = function(con) {
       
-      # Save csv files in the temp directory
-      tmpdir <- tempdir()
-      setwd(tempdir())
-      filestosave = c()
-      
-      i<-0
-      
-      # A file is required
-      req(input$fileToRead)
-      
-      # Creation of the start/stop table
-      ssTable <- buildStartStopTable(data = dataImported,
-                                     Event_Type = input$Event_Type,
-                                     Time_Relative_sf = input$Time_Relative_sf,
-                                     Observation = input$Observation,
-                                     Subject = input$Subject,
-                                     Behavior = input$Behavior)
-      
-      # Browsing all observations and all subjects in the start/stop table
-      for (o in input$selected.observations) {
-        for (s in input$selected.subjects) {
-          
-          possibleError <- tryCatch({
-            
-            # Building the ono table for the Observation 'o' and the Subject 's'
-            onoTable <- ssTable %>%
-              filter(observation == o) %>%
-              filter(subject == s) %>%
-              filter(behavior %in% input$selected.behaviors) %>%
-              buildOnoTable()
-            
-            # Creating the name of the ono table
-            onoName <- paste0("ono-", o, s, ".csv")
-            
-            # Writing the csv file
-            write.csv(onoTable, onoName)
-            
-            # Adding the path of the csv file to the zip
-            filestosave <- c(filestosave, onoName)
-            
-            i <- i + 1 
-          },
-          error = function(e) {
-            print(e)
-          },
-          warning = function(e) {
-            print(e)
-          })
-          if (inherits(possibleError, "error"))
-            next
-          if (inherits(possibleError, "warning"))
-            next
-        }
-      }
-      tryCatch({
-        # Creating the zip file to download
-        zip(zipfile = con, files = filestosave)
+        # Save csv files in the temp directory
+        tmpdir <- tempdir()
+        setwd(tempdir())
+        filestosave = c()
         
-        shinyalert(
-          title = paste0(i, " file(s) saved"),
-          size = "s", 
-          closeOnEsc = TRUE,
-          closeOnClickOutside = TRUE,
-          html = FALSE,
-          type = "success",
-          showConfirmButton = TRUE,
-          showCancelButton = FALSE,
-          confirmButtonText = "OK",
-          confirmButtonCol = "#00A659",
-          timer = 0,
-          imageUrl = "",
-          animation = TRUE
-        )
-      },error = function(e) {
-        showErrorPopup("Check filters and try again.")
-      })
+        i<-0
       
-    },
-    contentType = "application/zip"
-  )
+        # A file is required
+        req(input$fileToRead)
+        
+        # Creation of the start/stop table
+        ssTable <- buildStartStopTable(data = dataImported,
+                                       Event_Type = input$Event_Type,
+                                       Time_Relative_sf = input$Time_Relative_sf,
+                                       Observation = input$Observation,
+                                       Subject = input$Subject,
+                                       Behavior = input$Behavior)
+      
+        # Browsing all observations and all subjects in the start/stop table
+        for (o in input$selected.observations) {
+          for (s in input$selected.subjects) {
+            possibleError <- tryCatch({
+              
+              # Building the ono table for the Observation 'o' and the Subject 's'
+              onoTable <- ssTable %>%
+                filter(observation == o) %>%
+                filter(subject == s) %>%
+                filter(behavior %in% input$selected.behaviors) %>%
+                buildOnoTable()
+              
+              # Creating the name of the ono table
+              onoName <- paste0("ono-", o, s, ".csv")
+              
+              # Writing the csv file
+              write.csv(onoTable, onoName)
+              
+              # Adding the path of the csv file to the zip
+              filestosave <- c(filestosave, onoName)
+              
+              i <- i + 1 
+            },
+            error = function(e) {
+              print(e)
+            },
+            warning = function(e) {
+              print(e)
+            })
+            if (inherits(possibleError, "error"))
+              next
+            if (inherits(possibleError, "warning"))
+              next
+          }
+        }
+      
+        tryCatch({
+          # Creating the zip file to download
+          zip(zipfile = con, files = filestosave)
+      
+          # Show a popup to see the success
+          shinyalert(
+            title = paste0(i, " file(s) saved"),
+            type = "success",
+            confirmButtonCol = "#00A659",
+            animation = TRUE
+          )
+        }, error = function(e) {
+          # Show a popup to see the error
+          shinyalert(
+            title = "Sorry, something went wrong ... ",
+            text = "Check filters and try again.",
+            type = "error",
+            confirmButtonCol = "#F27474",
+            animation = TRUE
+          ) 
+        })
+        
+      },
+      contentType = "application/zip"
+    ) 
+     
 }
 
 shinyServer(server)
