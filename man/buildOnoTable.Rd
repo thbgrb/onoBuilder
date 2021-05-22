@@ -2,17 +2,17 @@
 % Please edit documentation in R/buildOnoTable.R
 \name{buildOnoTable}
 \alias{buildOnoTable}
-\title{Transform data into a table of occurrences - non occurrences}
+\title{Transform data into a table of occurrences - non occurrences (ono)}
 \usage{
 buildOnoTable(df)
 }
 \arguments{
-\item{df}{a \code{data.param} with a column of timestamps and a column of behaviors.
-#'}
+\item{df}{a start/stop table created with the function buildStartStopTable
+(with columns : start, end, observation, subject, behavior}
 }
 \value{
-returns a \code{data.frame} of occurences - non occurences.
+returns a table of occurences - non occurences.
 }
 \description{
-Transform data into a table of occurrences - non occurrences
+Transform data into a table of occurrences - non occurrences (ono)
 }

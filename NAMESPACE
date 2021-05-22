@@ -3,7 +3,7 @@
 export(buildOnoTable)
 export(buildStartStopTable)
 export(importDataTable)
-export(runOb)
+export(runOno)
 import(dplyr)
 import(tidyr)
 importFrom(readxl,read_excel)

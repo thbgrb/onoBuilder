@@ -1,3 +1,4 @@
+# Importing libraries
 library(shiny)
 library(shinydashboard)
 library(DT)
@@ -19,7 +20,7 @@ ui <- dashboardPage(
   # Content of the page
   dashboardBody(
     
-    # To use notification
+    # To use notification in this page
     useShinyalert(),
     
     # First line of boxes
@@ -34,7 +35,7 @@ ui <- dashboardPage(
         column(
           width = 3,
           
-          # Widget for import a file
+          # Box for importing a file
           box(
             width = NULL,
             solidHeader = TRUE,
@@ -88,7 +89,7 @@ ui <- dashboardPage(
           )
         ),
         
-        # Widget for the view of the imported file
+        # Box for viewing of the imported file raw
         conditionalPanel(
           condition = "output.isFileUploaded",
           box(
@@ -114,7 +115,7 @@ ui <- dashboardPage(
         collapsible = TRUE,
         status = "success",
         
-        # Widget of start/stop table builder
+        # Box for choosing columns name
         box(
           width = 3,
           solidHeader = TRUE,
@@ -134,7 +135,7 @@ ui <- dashboardPage(
         ),
         
         
-        # Widget for the view of the start/stop table
+        # Box for viewing the start/stop table created
         conditionalPanel(
           condition = "output.isSsTableCreated",
           box(
@@ -151,6 +152,8 @@ ui <- dashboardPage(
     fluidRow(
       conditionalPanel(
         condition = "output.isSsTableCreated",
+        
+        # Box for applying filters on start/stop table and download ono files
         box(
           collapsible = TRUE,
           width = 12,

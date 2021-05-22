@@ -1,9 +1,11 @@
+# Importing libraries
 library(dplyr)
 library(tidyr)
 
-### Define the shiny app server
+# Define the shiny app server
 server <- function(input, output, session) {
   
+  # Fix DT render table to 5 row by default
   options(DT.options = list(pageLength = 5))
   
   ### Function which update columns names inputs
@@ -188,7 +190,8 @@ server <- function(input, output, session) {
         # Browsing all observations and all subjects in the start/stop table
         for (o in input$selected.observations) {
           for (s in input$selected.subjects) {
-            possibleError <- tryCatch({
+            # Catch error on creation of ono files
+            tryCatch({
               
               # Building the ono table for the Observation 'o' and the Subject 's'
               onoTable <- ssTable %>%
@@ -221,6 +224,7 @@ server <- function(input, output, session) {
           }
         }
       
+        # Catch error on creation of the zip file
         tryCatch({
           # Creating the zip file to download
           zip(zipfile = con, files = filestosave)
