@@ -1,5 +1,5 @@
 Package: onoBuilder
-Title: Convert data to make a Frequency Profile analysis
+Title: Convert data for Frequency Profile analysis
 Version: 1.0
 Authors@R: 
     person(given = "Thibaut",
@@ -7,7 +7,7 @@ Authors@R:
            role = c("aut", "cre"),
            email = "t.grebert@icloud.com",
            comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: Convert qualitative data to quantitative data (in occurrences/non-occurrences - ono) from The Observer to make a Frequency Profile analysis.
+Description: Convert qualitative data to quantitative data from The Observer for Frequency Profile analysis.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
