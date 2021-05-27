@@ -1,63 +1,81 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
+![](man/figures/logo.png)
+
 # onoBuilder
 
 <!-- badges: start -->
+
+[![Lifecycle:
+stable](https://img.shields.io/badge/lifecycle-stable-green)](https://lifecycle.r-lib.org/articles/stages.html#stable)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/onoBuilder)](https://CRAN.R-project.org/package=onoBuilder)
 <!-- badges: end -->
 
-Convert qualitative data to quantitative data (in
-occurrences/non-occurrences - ono) from The Observer to make a Frequency
-Profile analysis.
+This is a tool to use on R with which you can convert qualitative data
+to quantitative data (in occurrences/non-occurrences - ono) to make a
+frequency profile analysis. Basically, it was created for files
+extracted from The Observer. But you can import any csv or excel file.
 
 ## Installation
 
-You can install the released version of onoBuilder from
-[CRAN](https://CRAN.R-project.org) with:
-
-``` r
-install.packages("onoBuilder")
-```
-
-And the development version from [GitHub](https://github.com/) with:
+You can install onoBuilder from [GitHub](https://github.com/) with:
 
 ``` r
 # install.packages("devtools")
 devtools::install_github("thbgrb/onoBuilder")
 ```
 
-## Example
-
-This is a basic example which shows you how to solve a common problem:
+## How to run onoBuilder ?
 
 ``` r
-library(onoBuilder)
-## basic example code
+library(runOno)
+onoBuilder::runOno()
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
+## Use onoBuilder to convert files
+
+### Step 1
+
+-   Browse a **csv** or an **excel** file in your computer.
+
+<img src="man/figures/browse.png" style="width:30.0%" />
+
+-   If you import a csv file you can configure specifications of the
+    file.
+
+<img src="man/figures/config.png" style="width:30.0%" />
+
+-   You can visualize content of the data on the right.
+
+![](man/figures/visualize.png)
+
+### Step 2
+
+-   Configure columns name, and then, click on the **next step** button.
+
+-   A start/stop table is created and you can visualize it.
+
+![](man/figures/step2.png)
+
+### Step 3
+
+-   By default, all observations, all subjects and all behaviors are
+    selected. You can change this in the box.
+
+-   Finally, you can download ono files on your computer by clicking on
+    **save your files** button.
+
+![](man/figures/step3.png)
+
+## Do the Frequency Profile analysis
+
+You have to run the frequency profile tool on R
 
 ``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
+library(FreqProf)
+FreqProf::runEx()
 ```
 
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this. You could also
-use GitHub Actions to re-render `README.Rmd` every time you push. An
-example workflow can be found here:
-<https://github.com/r-lib/actions/tree/master/examples>.
-
-You can also embed plots, for example:
-
-<img src="man/figures/README-pressure-1.png" width="100%" />
-
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.
+Then, you can use ono files downloaded in FreqProf.
