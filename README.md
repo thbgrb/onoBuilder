@@ -74,7 +74,7 @@ onoBuilder::runOno()
 You have to run the frequency profile tool on R
 
 ``` r
-library(FreqProf)
+require(FreqProf)
 FreqProf::runEx()
 ```
 
